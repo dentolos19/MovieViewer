@@ -1,0 +1,16 @@
+# Editor configurations
+.vs/
+.idea/
+
+# Project files
+.gradle/
+
+# User files
+local.properties
+.env*
+!.env*.template
+
+# Miscellaneous files
+.DS_Store
+Desktop.ini
+Thumbs.db
