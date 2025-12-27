@@ -8,7 +8,7 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun registerUser(user: User): Result<Unit> {
         return try {
-            if (userDao.userExists(user.userId)) {
+            if (userDao.userExists(user.username)) {
                 Result.failure(Exception("User ID already exists"))
             } else {
                 userDao.insertUser(user)

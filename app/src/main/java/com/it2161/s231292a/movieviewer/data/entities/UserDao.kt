@@ -15,18 +15,18 @@ interface UserDao {
     @Update
     suspend fun updateUser(user: User)
 
-    @Query("SELECT * FROM users WHERE userId = :userId")
+    @Query("SELECT * FROM users WHERE username = :userId")
     suspend fun getUserById(userId: String): User?
 
-    @Query("SELECT * FROM users WHERE userId = :userId")
+    @Query("SELECT * FROM users WHERE username = :userId")
     fun getUserByIdFlow(userId: String): Flow<User?>
 
-    @Query("SELECT * FROM users WHERE userId = :userId AND password = :password")
+    @Query("SELECT * FROM users WHERE username = :userId AND password = :password")
     suspend fun login(userId: String, password: String): User?
 
-    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE userId = :userId)")
+    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE username = :userId)")
     suspend fun userExists(userId: String): Boolean
 
-    @Query("DELETE FROM users WHERE userId = :userId")
+    @Query("DELETE FROM users WHERE username = :userId")
     suspend fun deleteUser(userId: String)
 }
