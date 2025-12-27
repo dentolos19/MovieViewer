@@ -1,9 +1,15 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
+
+// Load API key from local.properties
+val localProperties = gradleLocalProperties(rootDir, providers)
+val tmdbApiKey: String = localProperties.getProperty("TMDB_API_KEY") ?: ""
 
 android {
     namespace = "com.it2161.s231292a.movieviewer"
@@ -15,6 +21,9 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
+        // Add API key to BuildConfig
+        buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
     }
 
     buildTypes {
@@ -32,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
