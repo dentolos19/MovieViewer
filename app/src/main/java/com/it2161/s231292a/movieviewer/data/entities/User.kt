@@ -9,6 +9,6 @@ data class User(
     val username: String,
     val password: String,
     val preferredName: String,
-    val dateOfBirth: Int,
-    val profilePicture: Boolean
+    val dateOfBirth: Long, // Timestamp in milliseconds
+    val profilePicturePath: String? = null // File path to profile picture, null for default
 )
