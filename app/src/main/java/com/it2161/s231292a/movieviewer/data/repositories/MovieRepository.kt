@@ -1,6 +1,5 @@
 package com.it2161.s231292a.movieviewer.data.repositories
 
-import android.provider.SyncStateContract
 import com.it2161.s231292a.movieviewer.Constants
 import com.it2161.s231292a.movieviewer.data.NetworkResource
 import com.it2161.s231292a.movieviewer.data.MovieService
@@ -31,7 +30,7 @@ class MovieRepository(
             if (isOnline) {
                 try {
                     val response = when (category) {
-                        MovieCategory.POPULAR -> apiService.getPopularMovies(SyncStateContract.Constants.TMDB_API_KEY)
+                        MovieCategory.POPULAR -> apiService.getPopularMovies(Constants.TMDB_API_KEY)
                         MovieCategory.TOP_RATED -> apiService.getTopRatedMovies(Constants.TMDB_API_KEY)
                         MovieCategory.NOW_PLAYING -> apiService.getNowPlayingMovies(Constants.TMDB_API_KEY)
                         MovieCategory.UPCOMING -> apiService.getUpcomingMovies(Constants.TMDB_API_KEY)
