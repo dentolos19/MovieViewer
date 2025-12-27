@@ -1,0 +1,123 @@
+package com.it2161.s231292a.movieviewer.ui.models
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.it2161.s231292a.movieviewer.data.NetworkMonitor
+import com.it2161.s231292a.movieviewer.data.NetworkResource
+import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
+import com.it2161.s231292a.movieviewer.ui.states.SearchUiState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class SearchViewModel(
+    private val movieRepository: MovieRepository,
+    private val networkMonitor: NetworkMonitor
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(SearchUiState())
+    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+
+    private var searchJob: Job? = null
+
+    init {
+        observeNetworkStatus()
+    }
+
+    private fun observeNetworkStatus() {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collect { isOnline ->
+                _uiState.update { it.copy(isOnline = isOnline) }
+            }
+        }
+    }
+
+    fun updateQuery(query: String) {
+        _uiState.update { it.copy(query = query) }
+
+        // Debounce search
+        searchJob?.cancel()
+        if (query.isNotBlank()) {
+            searchJob = viewModelScope.launch {
+                delay(500) // Debounce delay
+                search()
+            }
+        } else {
+            _uiState.update { it.copy(results = emptyList(), hasSearched = false) }
+        }
+    }
+
+    fun search() {
+        val query = _uiState.value.query
+        if (query.isBlank()) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            val isOnline = networkMonitor.isCurrentlyConnected()
+            if (!isOnline) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Search requires internet connection",
+                        hasSearched = true
+                    )
+                }
+                return@launch
+            }
+
+            when (val result = movieRepository.searchMovies(query, isOnline)) {
+                is NetworkResource.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            results = result.data ?: emptyList(),
+                            isLoading = false,
+                            error = null,
+                            hasSearched = true
+                        )
+                    }
+                }
+                is NetworkResource.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.message,
+                            hasSearched = true
+                        )
+                    }
+                }
+                is NetworkResource.Loading -> {}
+            }
+        }
+    }
+
+    fun clearSearch() {
+        _uiState.update {
+            SearchUiState(isOnline = it.isOnline)
+        }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
+    }
+
+    companion object {
+        fun provideFactory(
+            movieRepository: MovieRepository,
+            networkMonitor: NetworkMonitor
+        ): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return SearchViewModel(movieRepository, networkMonitor) as T
+                }
+            }
+        }
+    }
+}
+

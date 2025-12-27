@@ -3,6 +3,7 @@ package com.it2161.s231292a.movieviewer.ui.models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.it2161.s231292a.movieviewer.Session
 import com.it2161.s231292a.movieviewer.data.repositories.UserRepository
 import com.it2161.s231292a.movieviewer.ui.states.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +77,10 @@ class LoginViewModel(
             _uiState.update { it.copy(isLoading = false) }
 
             result.fold(
-                onSuccess = { onSuccess() },
+                onSuccess = { user ->
+                    Session.login(user)
+                    onSuccess()
+                },
                 onFailure = { exception ->
                     onError(exception.message ?: "Login failed")
                 }
