@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.it2161.s231292a.movieviewer.ui.HomeScreen
 import com.it2161.s231292a.movieviewer.ui.LoginScreen
 
 @Composable
@@ -18,6 +19,10 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.LOGIN) {
             LoginScreen()
+        }
+
+        composable(Routes.HOME) {
+            HomeScreen()
         }
     }
 }
