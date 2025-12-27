@@ -1,4 +1,4 @@
-package com.it2161.s231292a.movieviewer.data
+package com.it2161.s231292a.movieviewer.data.repositories
 
 import com.it2161.s231292a.movieviewer.data.entities.User
 import com.it2161.s231292a.movieviewer.data.entities.UserDao

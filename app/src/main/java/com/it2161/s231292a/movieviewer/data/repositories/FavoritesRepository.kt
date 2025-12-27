@@ -1,4 +1,4 @@
-package com.it2161.s231292a.movieviewer.data
+package com.it2161.s231292a.movieviewer.data.repositories
 
 import android.content.Context
 import androidx.datastore.core.DataStore
