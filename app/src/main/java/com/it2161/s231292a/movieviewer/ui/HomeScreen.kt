@@ -9,16 +9,14 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.EmptyState
-import com.it2161.s231292a.movieviewer.ui.components.ErrorState
-import com.it2161.s231292a.movieviewer.ui.components.LoadingIndicator
-import com.it2161.s231292a.movieviewer.ui.components.MovieCard
-import com.it2161.s231292a.movieviewer.ui.components.NetworkStatusBanner
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,14 +40,16 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             AppHeader(
-                title = "MovieViewer",
-                actions = {
+                title = "Movie Viewer",
+                navigationIcon = {
                     IconButton(onClick = onSearchClick) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = "Search"
                         )
                     }
+                },
+                actions = {
                     IconButton(onClick = onFavoritesClick) {
                         Icon(
                             imageVector = Icons.Filled.Favorite,
@@ -98,15 +98,18 @@ fun HomeScreen(
                     uiState.isLoading && uiState.movies.isEmpty() -> {
                         LoadingIndicator()
                     }
+
                     uiState.error != null && uiState.movies.isEmpty() -> {
                         ErrorState(message = uiState.error!!)
                     }
+
                     uiState.movies.isEmpty() -> {
                         EmptyState(
                             title = "No movies found",
                             message = "Pull to refresh to load movies"
                         )
                     }
+
                     else -> {
                         LazyColumn(
                             contentPadding = PaddingValues(16.dp),

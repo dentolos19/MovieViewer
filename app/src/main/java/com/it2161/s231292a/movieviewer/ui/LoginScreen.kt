@@ -49,7 +49,7 @@ fun LoginScreen(
 
             // Title
             Text(
-                text = "MovieViewer",
+                text = "Movie Viewer",
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary
             )

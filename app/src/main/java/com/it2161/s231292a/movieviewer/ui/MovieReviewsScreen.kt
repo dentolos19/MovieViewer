@@ -196,4 +196,3 @@ private fun ReviewCard(review: MovieReview) {
         }
     }
 }
-
