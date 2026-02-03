@@ -5,6 +5,7 @@ object Routes {
     const val REGISTER = "register"
     const val HOME = "home"
     const val PROFILE = "profile"
+    const val FAVORITES = "favorites"
     const val MOVIE_DETAIL = "movie_detail/{movieId}"
     const val MOVIE_REVIEWS = "movie_reviews/{movieId}"
     const val SEARCH = "search"
