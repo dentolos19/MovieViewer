@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.FavoritesViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesViewModel,
@@ -24,6 +23,7 @@ fun FavoritesScreen(
     val uiState by viewModel.uiState.collectAsState()
     var movieToRemove by remember { mutableStateOf<Int?>(null) }
 
+    // Confirmation Dialog
     if (movieToRemove != null) {
         AlertDialog(
             onDismissRequest = { movieToRemove = null },
@@ -95,6 +95,7 @@ fun FavoritesScreen(
                                     }
                                 )
 
+                                // Delete button overlay
                                 IconButton(
                                     onClick = { movieToRemove = movie.id },
                                     modifier = Modifier.align(Alignment.TopEnd)

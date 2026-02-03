@@ -98,12 +98,16 @@ fun AppNavigation() {
                 LoginScreen(
                     viewModel = loginViewModel,
                     onLoginSuccess = {
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.LOGIN) {
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(Routes.LOGIN) { inclusive = true }
+                            }
                         }
                     },
                     onRegisterClick = {
-                        navController.navigate(Routes.REGISTER)
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.LOGIN) {
+                            navController.navigate(Routes.REGISTER)
+                        }
                     }
                 )
             }
@@ -115,12 +119,16 @@ fun AppNavigation() {
                 RegisterScreen(
                     viewModel = registerViewModel,
                     onRegisterSuccess = {
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.REGISTER) {
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(Routes.LOGIN) { inclusive = true }
+                            }
                         }
                     },
                     onBackClick = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.REGISTER) {
+                            navController.popBackStack()
+                        }
                     }
                 )
             }
@@ -132,16 +140,24 @@ fun AppNavigation() {
                 HomeScreen(
                     viewModel = homeViewModel,
                     onMovieClick = { movieId ->
-                        navController.navigate(Routes.movieDetail(movieId))
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.HOME) {
+                            navController.navigate(Routes.movieDetail(movieId))
+                        }
                     },
                     onSearchClick = {
-                        navController.navigate(Routes.SEARCH)
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.HOME) {
+                            navController.navigate(Routes.SEARCH)
+                        }
                     },
                     onProfileClick = {
-                        navController.navigate(Routes.PROFILE)
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.HOME) {
+                            navController.navigate(Routes.PROFILE)
+                        }
                     },
                     onFavoritesClick = {
-                        navController.navigate(Routes.FAVORITES)
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.HOME) {
+                            navController.navigate(Routes.FAVORITES)
+                        }
                     }
                 )
             }
@@ -153,13 +169,17 @@ fun AppNavigation() {
                 ProfileScreen(
                     viewModel = profileViewModel,
                     onBackClick = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.PROFILE) {
+                            navController.popBackStack()
+                        }
                     },
                     onLogout = {
-                        kotlinx.coroutines.MainScope().launch {
-                            Session.logout()
-                            navController.navigate(Routes.LOGIN) {
-                                popUpTo(0) { inclusive = true }
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.PROFILE) {
+                            kotlinx.coroutines.MainScope().launch {
+                                Session.logout()
+                                navController.navigate(Routes.LOGIN) {
+                                    popUpTo(0) { inclusive = true }
+                                }
                             }
                         }
                     }
@@ -177,10 +197,14 @@ fun AppNavigation() {
                 FavoritesScreen(
                     viewModel = favoritesViewModel,
                     onMovieClick = { movieId ->
-                        navController.navigate(Routes.movieDetail(movieId))
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.FAVORITES) {
+                            navController.navigate(Routes.movieDetail(movieId))
+                        }
                     },
                     onBackClick = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.FAVORITES) {
+                            navController.popBackStack()
+                        }
                     }
                 )
             }
@@ -201,10 +225,14 @@ fun AppNavigation() {
                 MovieDetailScreen(
                     viewModel = movieDetailViewModel,
                     onBackClick = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_DETAIL) {
+                            navController.popBackStack()
+                        }
                     },
                     onViewReviewsClick = { id ->
-                        navController.navigate(Routes.movieReviews(id))
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_DETAIL) {
+                            navController.navigate(Routes.movieReviews(id))
+                        }
                     }
                 )
             }
@@ -224,7 +252,9 @@ fun AppNavigation() {
                 MovieReviewsScreen(
                     viewModel = movieReviewsViewModel,
                     onBackClick = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_REVIEWS) {
+                            navController.popBackStack()
+                        }
                     }
                 )
             }
@@ -236,10 +266,14 @@ fun AppNavigation() {
                 SearchScreen(
                     viewModel = searchViewModel,
                     onMovieClick = { movieId ->
-                        navController.navigate(Routes.movieDetail(movieId))
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.SEARCH) {
+                            navController.navigate(Routes.movieDetail(movieId))
+                        }
                     },
                     onBackClick = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.SEARCH) {
+                            navController.popBackStack()
+                        }
                     }
                 )
             }
