@@ -3,45 +3,70 @@ package com.it2161.s231292a.movieviewer.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Netflix-inspired dark color scheme with blue accents
+private val NetflixDarkColorScheme = darkColorScheme(
+    primary = NetflixBlue,
+    onPrimary = Color.White,
+    primaryContainer = NetflixDarkGray,
+    onPrimaryContainer = Color.White,
+    secondary = NetflixBlueLight,
+    onSecondary = Color.White,
+    secondaryContainer = NetflixMediumGray,
+    onSecondaryContainer = Color.White,
+    tertiary = NetflixBlueMuted,
+    onTertiary = Color.White,
+    tertiaryContainer = NetflixLightGray,
+    onTertiaryContainer = Color.White,
+    background = NetflixBlack,
+    onBackground = Color.White,
+    surface = NetflixDarkGray,
+    onSurface = Color.White,
+    surfaceVariant = NetflixMediumGray,
+    onSurfaceVariant = NetflixTextGray,
+    surfaceTint = NetflixBlue,
+    inverseSurface = Color.White,
+    inverseOnSurface = NetflixBlack,
+    error = NetflixRed,
+    onError = Color.White,
+    errorContainer = Color(0xFF93000A),
+    onErrorContainer = Color(0xFFFFDAD6),
+    outline = NetflixLightGray,
+    outlineVariant = NetflixMediumGray,
+    scrim = NetflixBlack
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+// Light color scheme with Netflix blue (for users who prefer light mode)
+private val NetflixLightColorScheme = lightColorScheme(
+    primary = NetflixBlueDark,
     onPrimary = Color.White,
+    primaryContainer = NetflixBlueLight,
+    onPrimaryContainer = Color.White,
+    secondary = NetflixBlue,
     onSecondary = Color.White,
+    secondaryContainer = Color(0xFFD6E3FF),
+    onSecondaryContainer = NetflixBlueDark,
+    tertiary = NetflixBlueMuted,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    background = Color(0xFFF5F5F5),
+    onBackground = NetflixBlack,
+    surface = Color.White,
+    onSurface = NetflixBlack,
+    surfaceVariant = Color(0xFFE7E7E7),
+    onSurfaceVariant = Color(0xFF5C5C5C),
+    error = NetflixRed,
+    onError = Color.White,
+    outline = Color(0xFFCCCCCC)
 )
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true, // Dynamic color is available on Android 12+
+    darkTheme: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = if (darkTheme) NetflixDarkColorScheme else NetflixLightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
