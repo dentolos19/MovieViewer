@@ -165,19 +165,19 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // User ID (read-only)
-                OutlinedTextField(
-                    value = uiState.user?.username ?: "",
-                    onValueChange = {},
-                    label = { Text("User ID") },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    enabled = false
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 if (uiState.isEditing) {
+                    // User ID (read-only, always shown as disabled field)
+                    OutlinedTextField(
+                        value = uiState.user?.username ?: "",
+                        onValueChange = {},
+                        label = { Text("User ID") },
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        enabled = false
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     // Editable Preferred Name
                     TextInput(
                         value = uiState.preferredName,
@@ -248,27 +248,62 @@ fun ProfileScreen(
                         }
                     }
                 } else {
-                    // Read-only Preferred Name
-                    OutlinedTextField(
-                        value = uiState.user?.preferredName ?: "",
-                        onValueChange = {},
-                        label = { Text("Preferred Name") },
+                    // View mode - Display as text
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        enabled = false
-                    )
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        // User ID
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "User ID",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = uiState.user?.username ?: "-",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        // Preferred Name
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "Preferred Name",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = uiState.user?.preferredName ?: "-",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
 
-                    // Read-only Date of Birth
-                    OutlinedTextField(
-                        value = uiState.user?.dateOfBirth?.let { dateFormatter.format(Date(it)) } ?: "",
-                        onValueChange = {},
-                        label = { Text("Date of Birth") },
-                        modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        enabled = false
-                    )
+                        // Date of Birth
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "Date of Birth",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = uiState.user?.dateOfBirth?.let { dateFormatter.format(Date(it)) } ?: "-",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(32.dp))
 
