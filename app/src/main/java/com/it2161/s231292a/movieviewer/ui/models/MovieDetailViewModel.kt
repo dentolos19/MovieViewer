@@ -20,7 +20,6 @@ class MovieDetailViewModel(
     private val favoritesRepository: FavoritesRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(MovieDetailUiState())
     val uiState: StateFlow<MovieDetailUiState> = _uiState.asStateFlow()
 
@@ -62,6 +61,7 @@ class MovieDetailViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Error -> {
                     _uiState.update {
                         it.copy(
@@ -71,6 +71,7 @@ class MovieDetailViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Loading -> {}
             }
         }
@@ -90,6 +91,7 @@ class MovieDetailViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Error -> {
                     _uiState.update {
                         it.copy(
@@ -98,6 +100,7 @@ class MovieDetailViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Loading -> {}
             }
         }
@@ -107,10 +110,6 @@ class MovieDetailViewModel(
         viewModelScope.launch {
             favoritesRepository.toggleFavorite(movieId)
         }
-    }
-
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
     }
 
     companion object {
@@ -134,4 +133,3 @@ class MovieDetailViewModel(
         }
     }
 }
-

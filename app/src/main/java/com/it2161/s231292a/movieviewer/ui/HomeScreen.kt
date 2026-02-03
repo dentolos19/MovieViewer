@@ -37,6 +37,14 @@ fun HomeScreen(
         MovieCategory.UPCOMING to "Upcoming"
     )
 
+    // Show error snackbar if there's an error but we have cached data
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null && uiState.movies.isNotEmpty()) {
+            // Error with cached data - could show snackbar
+            viewModel.clearError()
+        }
+    }
+
     Scaffold(
         topBar = {
             AppHeader(
@@ -128,14 +136,6 @@ fun HomeScreen(
                     }
                 }
             }
-        }
-    }
-
-    // Show error snackbar if there's an error but we have cached data
-    LaunchedEffect(uiState.error) {
-        if (uiState.error != null && uiState.movies.isNotEmpty()) {
-            // Error with cached data - could show snackbar
-            viewModel.clearError()
         }
     }
 }

@@ -19,7 +19,6 @@ class SearchViewModel(
     private val movieRepository: MovieRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
@@ -82,6 +81,7 @@ class SearchViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Error -> {
                     _uiState.update {
                         it.copy(
@@ -91,6 +91,7 @@ class SearchViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Loading -> {}
             }
         }
@@ -100,10 +101,6 @@ class SearchViewModel(
         _uiState.update {
             SearchUiState(isOnline = it.isOnline)
         }
-    }
-
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
     }
 
     companion object {
@@ -120,4 +117,3 @@ class SearchViewModel(
         }
     }
 }
-

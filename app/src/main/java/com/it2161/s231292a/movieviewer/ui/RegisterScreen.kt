@@ -1,10 +1,8 @@
 package com.it2161.s231292a.movieviewer.ui
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,15 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.it2161.s231292a.movieviewer.R
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.CameraCaptureDialog
-import com.it2161.s231292a.movieviewer.ui.components.DatePickerInput
-import com.it2161.s231292a.movieviewer.ui.components.PasswordInput
-import com.it2161.s231292a.movieviewer.ui.components.TextInput
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.RegisterViewModel
 import java.io.File
 
@@ -40,6 +32,17 @@ fun RegisterScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var showCamera by remember { mutableStateOf(false) }
+
+    // Camera Dialog
+    if (showCamera) {
+        CameraCaptureDialog(
+            onImageCaptured = { imageBytes ->
+                val path = viewModel.saveProfilePicture(context, imageBytes)
+                viewModel.setProfilePicturePath(path)
+            },
+            onDismiss = { showCamera = false }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -216,16 +219,5 @@ fun RegisterScreen(
                 }
             }
         }
-    }
-
-    // Camera Dialog
-    if (showCamera) {
-        CameraCaptureDialog(
-            onImageCaptured = { imageBytes ->
-                val path = viewModel.saveProfilePicture(context, imageBytes)
-                viewModel.setProfilePicturePath(path)
-            },
-            onDismiss = { showCamera = false }
-        )
     }
 }

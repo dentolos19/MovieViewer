@@ -9,19 +9,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.EmptyState
-import com.it2161.s231292a.movieviewer.ui.components.ErrorState
-import com.it2161.s231292a.movieviewer.ui.components.LoadingIndicator
-import com.it2161.s231292a.movieviewer.ui.components.MovieCard
-import com.it2161.s231292a.movieviewer.ui.components.NetworkStatusBanner
-import com.it2161.s231292a.movieviewer.ui.components.NoResultsState
-import com.it2161.s231292a.movieviewer.ui.components.OfflineState
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.SearchViewModel
 
 @Composable
@@ -88,15 +83,19 @@ fun SearchScreen(
                 !uiState.isOnline && uiState.query.isNotBlank() -> {
                     OfflineState()
                 }
+
                 uiState.isLoading -> {
                     LoadingIndicator()
                 }
+
                 uiState.error != null -> {
                     ErrorState(message = uiState.error!!)
                 }
+
                 uiState.hasSearched && uiState.results.isEmpty() -> {
                     NoResultsState(query = uiState.query)
                 }
+
                 uiState.results.isEmpty() && !uiState.hasSearched -> {
                     EmptyState(
                         icon = Icons.Filled.Search,
@@ -104,6 +103,7 @@ fun SearchScreen(
                         message = "Enter a movie title to search"
                     )
                 }
+
                 else -> {
                     LazyColumn(
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),

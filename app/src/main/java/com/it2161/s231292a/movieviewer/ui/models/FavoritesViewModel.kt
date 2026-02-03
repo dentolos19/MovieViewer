@@ -18,7 +18,6 @@ class FavoritesViewModel(
     private val favoritesRepository: FavoritesRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(FavoritesUiState())
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
 
@@ -67,10 +66,6 @@ class FavoritesViewModel(
         }
     }
 
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
-    }
-
     companion object {
         fun provideFactory(
             movieRepository: MovieRepository,
@@ -90,4 +85,3 @@ class FavoritesViewModel(
         }
     }
 }
-

@@ -1,46 +1,23 @@
 package com.it2161.s231292a.movieviewer.ui.components
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -52,6 +29,47 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executors
+
+private fun captureImage(
+    imageCapture: ImageCapture,
+    onImageCaptured: (ByteArray) -> Unit
+) {
+    val executor = Executors.newSingleThreadExecutor()
+
+    imageCapture.takePicture(
+        executor,
+        object : ImageCapture.OnImageCapturedCallback() {
+            override fun onCaptureSuccess(image: ImageProxy) {
+                val buffer = image.planes[0].buffer
+                val bytes = ByteArray(buffer.remaining())
+                buffer.get(bytes)
+
+                // Convert to bitmap and compress
+                var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+
+                // Rotate if needed based on rotation degrees
+                val rotationDegrees = image.imageInfo.rotationDegrees
+                if (rotationDegrees != 0) {
+                    val matrix = Matrix()
+                    matrix.postRotate(rotationDegrees.toFloat())
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                }
+
+                // Compress to JPEG
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
+                val compressedBytes = outputStream.toByteArray()
+
+                image.close()
+                onImageCaptured(compressedBytes)
+            }
+
+            override fun onError(exception: ImageCaptureException) {
+                exception.printStackTrace()
+            }
+        }
+    )
+}
 
 @Composable
 fun CameraCaptureDialog(
@@ -205,45 +223,3 @@ fun CameraCaptureDialog(
         }
     }
 }
-
-private fun captureImage(
-    imageCapture: ImageCapture,
-    onImageCaptured: (ByteArray) -> Unit
-) {
-    val executor = Executors.newSingleThreadExecutor()
-
-    imageCapture.takePicture(
-        executor,
-        object : ImageCapture.OnImageCapturedCallback() {
-            override fun onCaptureSuccess(image: ImageProxy) {
-                val buffer = image.planes[0].buffer
-                val bytes = ByteArray(buffer.remaining())
-                buffer.get(bytes)
-
-                // Convert to bitmap and compress
-                var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-
-                // Rotate if needed based on rotation degrees
-                val rotationDegrees = image.imageInfo.rotationDegrees
-                if (rotationDegrees != 0) {
-                    val matrix = Matrix()
-                    matrix.postRotate(rotationDegrees.toFloat())
-                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-                }
-
-                // Compress to JPEG
-                val outputStream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
-                val compressedBytes = outputStream.toByteArray()
-
-                image.close()
-                onImageCaptured(compressedBytes)
-            }
-
-            override fun onError(exception: ImageCaptureException) {
-                exception.printStackTrace()
-            }
-        }
-    )
-}
-

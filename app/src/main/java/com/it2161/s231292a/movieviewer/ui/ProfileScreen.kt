@@ -20,16 +20,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.CameraCaptureDialog
-import com.it2161.s231292a.movieviewer.ui.components.DatePickerInput
-import com.it2161.s231292a.movieviewer.ui.components.LoadingIndicator
-import com.it2161.s231292a.movieviewer.ui.components.TextInput
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.ProfileViewModel
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 @Composable
 fun ProfileScreen(
@@ -49,6 +44,41 @@ fun ProfileScreen(
             Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
             viewModel.clearSaveSuccess()
         }
+    }
+
+    // Camera Dialog
+    if (showCamera) {
+        CameraCaptureDialog(
+            onImageCaptured = { imageBytes ->
+                val path = viewModel.saveProfilePicture(context, imageBytes)
+                viewModel.setProfilePicturePath(path)
+            },
+            onDismiss = { showCamera = false }
+        )
+    }
+
+    // Logout Confirmation Dialog
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("Logout") },
+            text = { Text("Are you sure you want to logout?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        onLogout()
+                    }
+                ) {
+                    Text("Logout")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -258,40 +288,5 @@ fun ProfileScreen(
                 }
             }
         }
-    }
-
-    // Camera Dialog
-    if (showCamera) {
-        CameraCaptureDialog(
-            onImageCaptured = { imageBytes ->
-                val path = viewModel.saveProfilePicture(context, imageBytes)
-                viewModel.setProfilePicturePath(path)
-            },
-            onDismiss = { showCamera = false }
-        )
-    }
-
-    // Logout Confirmation Dialog
-    if (showLogoutDialog) {
-        AlertDialog(
-            onDismissRequest = { showLogoutDialog = false },
-            title = { Text("Logout") },
-            text = { Text("Are you sure you want to logout?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showLogoutDialog = false
-                        onLogout()
-                    }
-                ) {
-                    Text("Logout")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
     }
 }

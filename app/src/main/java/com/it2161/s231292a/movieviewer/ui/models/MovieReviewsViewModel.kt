@@ -18,7 +18,6 @@ class MovieReviewsViewModel(
     private val movieRepository: MovieRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(MovieReviewsUiState())
     val uiState: StateFlow<MovieReviewsUiState> = _uiState.asStateFlow()
 
@@ -60,6 +59,7 @@ class MovieReviewsViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Error -> {
                     _uiState.update {
                         it.copy(
@@ -69,13 +69,10 @@ class MovieReviewsViewModel(
                         )
                     }
                 }
+
                 is NetworkResource.Loading -> {}
             }
         }
-    }
-
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
     }
 
     companion object {
@@ -93,4 +90,3 @@ class MovieReviewsViewModel(
         }
     }
 }
-

@@ -18,7 +18,6 @@ class HomeViewModel(
     private val movieRepository: MovieRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
@@ -77,6 +76,7 @@ class HomeViewModel(
                             )
                         }
                     }
+
                     is NetworkResource.Error -> {
                         _uiState.update {
                             it.copy(
@@ -85,6 +85,7 @@ class HomeViewModel(
                             )
                         }
                     }
+
                     is NetworkResource.Loading -> {
                         // Already handled
                     }
@@ -118,6 +119,7 @@ class HomeViewModel(
                             )
                         }
                     }
+
                     is NetworkResource.Error -> {
                         _uiState.update {
                             it.copy(
@@ -126,6 +128,7 @@ class HomeViewModel(
                             )
                         }
                     }
+
                     is NetworkResource.Loading -> {}
                 }
             } else {
@@ -157,4 +160,3 @@ class HomeViewModel(
         }
     }
 }
-

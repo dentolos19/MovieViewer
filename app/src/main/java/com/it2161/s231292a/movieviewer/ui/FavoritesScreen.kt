@@ -11,11 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.EmptyState
-import com.it2161.s231292a.movieviewer.ui.components.LoadingIndicator
-import com.it2161.s231292a.movieviewer.ui.components.MovieCard
-import com.it2161.s231292a.movieviewer.ui.components.NetworkStatusBanner
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.FavoritesViewModel
 
 @Composable
@@ -26,6 +22,30 @@ fun FavoritesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var movieToRemove by remember { mutableStateOf<Int?>(null) }
+
+    // Confirmation Dialog
+    if (movieToRemove != null) {
+        AlertDialog(
+            onDismissRequest = { movieToRemove = null },
+            title = { Text("Remove from Favorites") },
+            text = { Text("Are you sure you want to remove this movie from your favorites?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        movieToRemove?.let { viewModel.removeFromFavorites(it) }
+                        movieToRemove = null
+                    }
+                ) {
+                    Text("Remove")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { movieToRemove = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -47,6 +67,7 @@ fun FavoritesScreen(
                 uiState.isLoading -> {
                     LoadingIndicator()
                 }
+
                 uiState.movies.isEmpty() -> {
                     EmptyState(
                         icon = Icons.Filled.Favorite,
@@ -54,6 +75,7 @@ fun FavoritesScreen(
                         message = "Movies you mark as favorites will appear here"
                     )
                 }
+
                 else -> {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
@@ -90,29 +112,5 @@ fun FavoritesScreen(
                 }
             }
         }
-    }
-
-    // Confirmation Dialog
-    if (movieToRemove != null) {
-        AlertDialog(
-            onDismissRequest = { movieToRemove = null },
-            title = { Text("Remove from Favorites") },
-            text = { Text("Are you sure you want to remove this movie from your favorites?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        movieToRemove?.let { viewModel.removeFromFavorites(it) }
-                        movieToRemove = null
-                    }
-                ) {
-                    Text("Remove")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { movieToRemove = null }) {
-                    Text("Cancel")
-                }
-            }
-        )
     }
 }

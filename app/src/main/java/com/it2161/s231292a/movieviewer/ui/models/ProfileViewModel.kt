@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.it2161.s231292a.movieviewer.Session
-import com.it2161.s231292a.movieviewer.data.entities.User
 import com.it2161.s231292a.movieviewer.data.repositories.UserRepository
 import com.it2161.s231292a.movieviewer.ui.states.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,6 @@ import java.io.FileOutputStream
 class ProfileViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
@@ -172,10 +170,6 @@ class ProfileViewModel(
         }
     }
 
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
-    }
-
     fun clearSaveSuccess() {
         _uiState.update { it.copy(saveSuccess = false) }
     }
@@ -191,4 +185,3 @@ class ProfileViewModel(
         }
     }
 }
-

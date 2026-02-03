@@ -19,7 +19,6 @@ import java.io.FileOutputStream
 class RegisterViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
@@ -168,4 +167,3 @@ class RegisterViewModel(
         }
     }
 }
-
