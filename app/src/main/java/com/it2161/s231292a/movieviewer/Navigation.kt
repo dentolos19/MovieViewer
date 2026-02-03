@@ -25,7 +25,6 @@ import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.data.repositories.UserRepository
 import com.it2161.s231292a.movieviewer.data.repositories.favoritesDataStore
-import com.it2161.s231292a.movieviewer.ui.FavoritesScreen
 import com.it2161.s231292a.movieviewer.ui.HomeScreen
 import com.it2161.s231292a.movieviewer.ui.LoginScreen
 import com.it2161.s231292a.movieviewer.ui.MovieDetailScreen
@@ -129,16 +128,21 @@ fun AppNavigation() {
                 val homeViewModel: HomeViewModel = viewModel(
                     factory = HomeViewModel.provideFactory(movieRepository, networkMonitor)
                 )
+                val favoritesViewModel: FavoritesViewModel = viewModel(
+                    factory = FavoritesViewModel.provideFactory(
+                        movieRepository,
+                        favoritesRepository,
+                        networkMonitor
+                    )
+                )
                 HomeScreen(
                     viewModel = homeViewModel,
+                    favoritesViewModel = favoritesViewModel,
                     onMovieClick = { movieId ->
                         navController.navigate(Routes.movieDetail(movieId))
                     },
                     onSearchClick = {
                         navController.navigate(Routes.SEARCH)
-                    },
-                    onFavoritesClick = {
-                        navController.navigate(Routes.FAVORITES)
                     },
                     onProfileClick = {
                         navController.navigate(Routes.PROFILE)
@@ -204,25 +208,6 @@ fun AppNavigation() {
                 )
                 MovieReviewsScreen(
                     viewModel = movieReviewsViewModel,
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable(Routes.FAVORITES) {
-                val favoritesViewModel: FavoritesViewModel = viewModel(
-                    factory = FavoritesViewModel.provideFactory(
-                        movieRepository,
-                        favoritesRepository,
-                        networkMonitor
-                    )
-                )
-                FavoritesScreen(
-                    viewModel = favoritesViewModel,
-                    onMovieClick = { movieId ->
-                        navController.navigate(Routes.movieDetail(movieId))
-                    },
                     onBackClick = {
                         navController.popBackStack()
                     }
