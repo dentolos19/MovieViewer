@@ -130,34 +130,39 @@ fun MovieDetailScreen(
                                     )
 
                                     if (movie.tagline != null && movie.tagline.isNotBlank()) {
+                                        Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = movie.tagline,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            text = "\"${movie.tagline}\"",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontWeight = FontWeight.Medium
                                         )
                                     }
                                 }
 
                                 // Rating Badge
-                                Card(
-                                    colors = CardDefaults.cardColors(
+                                ElevatedCard(
+                                    colors = CardDefaults.elevatedCardColors(
                                         containerColor = MaterialTheme.colorScheme.primaryContainer
+                                    ),
+                                    elevation = CardDefaults.elevatedCardElevation(
+                                        defaultElevation = 4.dp
                                     )
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.Star,
                                             contentDescription = "Rating",
                                             tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(22.dp)
                                         )
-                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
                                         Text(
                                             text = String.format("%.1f", movie.voteAverage),
-                                            style = MaterialTheme.typography.titleMedium,
+                                            style = MaterialTheme.typography.titleLarge,
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -175,11 +180,12 @@ fun MovieDetailScreen(
                             }
 
                             if (genres.isNotEmpty()) {
-                                Row(
+                                FlowRow(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    genres.take(4).forEach { genre ->
+                                    genres.forEach { genre ->
                                         SuggestionChip(
                                             onClick = {},
                                             label = { Text(genre.name) }
@@ -190,10 +196,13 @@ fun MovieDetailScreen(
                             }
 
                             // Info Grid
-                            Card(
+                            ElevatedCard(
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = CardDefaults.cardColors(
+                                colors = CardDefaults.elevatedCardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ),
+                                elevation = CardDefaults.elevatedCardElevation(
+                                    defaultElevation = 2.dp
                                 )
                             ) {
                                 Column(
@@ -210,21 +219,29 @@ fun MovieDetailScreen(
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(20.dp))
 
                             // Overview
                             Text(
                                 text = "Overview",
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text = movie.overview,
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyLarge,
+                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.5
                             )
 
-                            Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(20.dp))
 
                             // Reviews Section Preview
                             Row(
@@ -233,15 +250,22 @@ fun MovieDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Reviews (${uiState.reviews.size})",
-                                    style = MaterialTheme.typography.titleMedium,
+                                    text = "Reviews",
+                                    style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold
                                 )
 
-                                TextButton(onClick = { onViewReviewsClick(movie.id) }) {
-                                    Text("View All")
+                                if (uiState.reviews.isNotEmpty()) {
+                                    TextButton(onClick = { onViewReviewsClick(movie.id) }) {
+                                        Text(
+                                            "View All (${uiState.reviews.size})",
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
                                 }
                             }
+
+                            Spacer(modifier = Modifier.height(8.dp))
 
                             if (uiState.isLoadingReviews) {
                                 CircularProgressIndicator(
@@ -261,38 +285,56 @@ fun MovieDetailScreen(
                                     Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(vertical = 4.dp)
+                                            .padding(vertical = 4.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        )
                                     ) {
                                         Column(
-                                            modifier = Modifier.padding(12.dp)
+                                            modifier = Modifier.padding(16.dp)
                                         ) {
                                             Row(
-                                                verticalAlignment = Alignment.CenterVertically
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.fillMaxWidth()
                                             ) {
                                                 Text(
                                                     text = review.author,
                                                     style = MaterialTheme.typography.titleSmall,
-                                                    fontWeight = FontWeight.Bold
+                                                    fontWeight = FontWeight.Bold,
+                                                    modifier = Modifier.weight(1f)
                                                 )
                                                 if (review.authorRating != null) {
-                                                    Spacer(modifier = Modifier.width(8.dp))
-                                                    Icon(
-                                                        imageVector = Icons.Filled.Star,
-                                                        contentDescription = "Rating",
-                                                        tint = MaterialTheme.colorScheme.primary,
-                                                        modifier = Modifier.size(14.dp)
-                                                    )
-                                                    Text(
-                                                        text = String.format("%.1f", review.authorRating),
-                                                        style = MaterialTheme.typography.bodySmall
-                                                    )
+                                                    Card(
+                                                        colors = CardDefaults.cardColors(
+                                                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                                                        )
+                                                    ) {
+                                                        Row(
+                                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Icon(
+                                                                imageVector = Icons.Filled.Star,
+                                                                contentDescription = "Rating",
+                                                                tint = MaterialTheme.colorScheme.primary,
+                                                                modifier = Modifier.size(14.dp)
+                                                            )
+                                                            Spacer(modifier = Modifier.width(4.dp))
+                                                            Text(
+                                                                text = String.format("%.1f", review.authorRating),
+                                                                style = MaterialTheme.typography.bodySmall,
+                                                                fontWeight = FontWeight.Bold
+                                                            )
+                                                        }
+                                                    }
                                                 }
                                             }
-                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Spacer(modifier = Modifier.height(8.dp))
                                             Text(
-                                                text = review.content.take(200) + if (review.content.length > 200) "..." else "",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                text = review.content.take(150) + if (review.content.length > 150) "..." else "",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                maxLines = 3
                                             )
                                         }
                                     }

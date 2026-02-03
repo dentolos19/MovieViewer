@@ -1,5 +1,6 @@
 package com.it2161.s231292a.movieviewer.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -66,7 +67,7 @@ fun MovieReviewsScreen(
                 else -> {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(
                             items = uiState.reviews,
@@ -83,6 +84,10 @@ fun MovieReviewsScreen(
 
 @Composable
 private fun ReviewCard(review: MovieReview) {
+    var isExpanded by remember { mutableStateOf(false) }
+    val maxCollapsedLength = 300
+    val shouldTruncate = review.content.length > maxCollapsedLength
+
     val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
 
@@ -93,8 +98,14 @@ private fun ReviewCard(review: MovieReview) {
         review.createdAt.take(10)
     }
 
-    Card(
-        modifier = Modifier.fillMaxWidth()
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = shouldTruncate) { isExpanded = !isExpanded },
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -115,20 +126,20 @@ private fun ReviewCard(review: MovieReview) {
                         model = avatarUrl,
                         contentDescription = review.author,
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(56.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
                 } else {
                     Surface(
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(56.dp),
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = review.author,
-                            modifier = Modifier.padding(12.dp),
+                            modifier = Modifier.padding(14.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
@@ -144,6 +155,12 @@ private fun ReviewCard(review: MovieReview) {
                     )
                     Text(
                         text = "@${review.authorUsername}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = formattedDate,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -157,19 +174,19 @@ private fun ReviewCard(review: MovieReview) {
                         )
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Rating",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = String.format("%.1f", review.authorRating),
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -177,22 +194,35 @@ private fun ReviewCard(review: MovieReview) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            HorizontalDivider()
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Review Content
+            val displayText = if (shouldTruncate && !isExpanded) {
+                review.content.take(maxCollapsedLength).trim() + "..."
+            } else {
+                review.content
+            }
+
             Text(
-                text = review.content,
-                style = MaterialTheme.typography.bodyMedium
+                text = displayText,
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Date
-            Text(
-                text = formattedDate,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (shouldTruncate) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = if (isExpanded) "Show less" else "Read more",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable { isExpanded = !isExpanded }
+                )
+            }
         }
     }
 }
