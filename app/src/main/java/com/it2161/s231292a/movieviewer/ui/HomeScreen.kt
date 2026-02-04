@@ -71,7 +71,7 @@ fun HomeScreen(
                     Box {
                         IconButton(onClick = { showDropdownMenu = true }) {
                             Icon(
-                                imageVector = Icons.Filled.Person,
+                                imageVector = Icons.Filled.Menu,
                                 contentDescription = "Menu"
                             )
                         }
