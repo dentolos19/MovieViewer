@@ -17,12 +17,16 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.it2161.s231292a.movieviewer.Constants
+import com.it2161.s231292a.movieviewer.R
 import com.it2161.s231292a.movieviewer.data.entities.Movie
 
 @Composable
@@ -67,7 +71,12 @@ fun MovieCard(
                     .aspectRatio(2f / 3f)
             ) {
                 AsyncImage(
-                    model = Constants.getPosterUrl(movie.posterPath),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(Constants.getPosterUrl(movie.posterPath))
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(R.drawable.placeholder),
+                    error = painterResource(R.drawable.placeholder),
                     contentDescription = movie.title,
                     modifier = Modifier
                         .fillMaxSize()
