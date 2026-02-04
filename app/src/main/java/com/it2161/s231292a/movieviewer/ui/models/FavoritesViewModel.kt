@@ -7,9 +7,12 @@ import com.it2161.s231292a.movieviewer.data.NetworkMonitor
 import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.ui.states.FavoritesUiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -38,25 +41,33 @@ class FavoritesViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            favoritesRepository.favoriteMovieIds.collect { favoriteIds ->
-                if (favoriteIds.isEmpty()) {
+            favoritesRepository.favoriteMovieIds
+                .flatMapLatest { favoriteIds ->
+                    if (favoriteIds.isEmpty()) {
+                        flowOf(emptyList())
+                    } else {
+                        movieRepository.getMoviesByIds(favoriteIds.toList())
+                    }
+                }
+                .collect { movies ->
                     _uiState.update {
                         it.copy(
-                            movies = emptyList(),
+                            movies = movies,
                             isLoading = false
                         )
                     }
-                } else {
-                    movieRepository.getMoviesByIds(favoriteIds.toList()).collect { movies ->
-                        _uiState.update {
-                            it.copy(
-                                movies = movies,
-                                isLoading = false
-                            )
-                        }
-                    }
                 }
-            }
+        }
+    }
+
+    fun refreshFavorites() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+
+            // Simulate network refresh delay since we don't have a batch update API
+            delay(1500)
+
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 

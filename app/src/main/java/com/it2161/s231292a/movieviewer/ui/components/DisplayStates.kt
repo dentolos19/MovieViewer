@@ -42,8 +42,10 @@ fun EmptyState(
     message: String? = null,
     modifier: Modifier = Modifier
 ) {
+    // Removed fillMaxSize() from Box to allow it to be used inside other containers
+    // that might control its size (like fillParentMaxSize in LazyColumn)
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -88,7 +90,7 @@ fun ErrorState(
         icon = Icons.Filled.Error,
         title = "Something went wrong",
         message = message,
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     )
 }
 
@@ -100,7 +102,7 @@ fun OfflineState(
         icon = Icons.Filled.CloudOff,
         title = "You're offline",
         message = "This feature requires an internet connection",
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     )
 }
 
@@ -113,7 +115,6 @@ fun NoResultsState(
         icon = Icons.Filled.SearchOff,
         title = "No results found",
         message = "We couldn't find any movies matching \"$query\"",
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     )
 }
-
