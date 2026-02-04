@@ -91,38 +91,6 @@ fun MovieCard(
                             )
                         )
                 )
-
-                // Rating Badge
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.95f),
-                    shadowElevation = 2.dp
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Rating",
-                            tint = Color(0xFFFFD700),
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(
-                            text = String.format("%.1f", movie.voteAverage),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp
-                            ),
-                            color = Color.White
-                        )
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.width(14.dp))
@@ -133,27 +101,6 @@ fun MovieCard(
                     .weight(1f)
                     .padding(vertical = 2.dp)
             ) {
-//                // Category Badge
-//                if (movie.category.isNotEmpty()) {
-//                    Surface(
-//                        shape = RoundedCornerShape(6.dp),
-//                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
-//                        modifier = Modifier
-//                    ) {
-//                        Text(
-//                            text = movie.category.replace("_", " ").uppercase(),
-//                            style = MaterialTheme.typography.labelSmall.copy(
-//                                fontSize = 9.sp,
-//                                fontWeight = FontWeight.SemiBold,
-//                                letterSpacing = 0.8.sp
-//                            ),
-//                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-//                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.height(8.dp))
-//                }
-
                 // Title
                 Text(
                     text = movie.title,
@@ -179,15 +126,31 @@ fun MovieCard(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Vote Count
+                // Rating and Vote Count
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(MaterialTheme.colorScheme.primary)
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Rating",
+                        tint = Color(0xFFFFD700),
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = String.format("%.1f", movie.voteAverage),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "·",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
@@ -208,7 +171,7 @@ fun MovieCard(
                         lineHeight = 18.sp
                     ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f),
-                    maxLines = 4,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
             }
