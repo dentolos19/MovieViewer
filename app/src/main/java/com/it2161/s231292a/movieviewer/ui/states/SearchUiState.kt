@@ -3,11 +3,11 @@ package com.it2161.s231292a.movieviewer.ui.states
 import com.it2161.s231292a.movieviewer.data.entities.Movie
 
 data class SearchUiState(
-    val query: String = "",
-    val results: List<Movie> = emptyList(),
     val isLoading: Boolean = false,
+    val isOnline: Boolean = true,
     val error: String? = null,
+    val query: String = "",
     val hasSearched: Boolean = false,
-    val isOnline: Boolean = true
+    val results: List<Movie> = emptyList(),
 )
 
