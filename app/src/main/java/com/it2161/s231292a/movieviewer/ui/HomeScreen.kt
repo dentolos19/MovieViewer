@@ -3,6 +3,7 @@ package com.it2161.s231292a.movieviewer.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.HomeViewModel
+import kotlinx.coroutines.launch
 
 private data class NavItem(
     val category: MovieCategory,
@@ -41,6 +43,8 @@ fun HomeScreen(
         )
     }
     var showDropdownMenu by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     val navItems = listOf(
         NavItem(MovieCategory.POPULAR, "Popular", Icons.Filled.Star),
@@ -123,8 +127,17 @@ fun HomeScreen(
                         label = { Text(navItem.title) },
                         selected = selectedNavItem == navItem,
                         onClick = {
-                            selectedNavItem = navItem
-                            viewModel.selectCategory(navItem.category)
+                            if (selectedNavItem != navItem) {
+                                selectedNavItem = navItem
+                                viewModel.selectCategory(navItem.category)
+                                coroutineScope.launch {
+                                    listState.scrollToItem(0)
+                                }
+                            } else {
+                                coroutineScope.launch {
+                                    listState.animateScrollToItem(0)
+                                }
+                            }
                         }
                     )
                 }
@@ -144,8 +157,15 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 when {
-                    uiState.isLoading && uiState.movies.isEmpty() -> {
-                        LoadingIndicator()
+                    uiState.isLoading -> {
+                        LazyColumn(
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(5) {
+                                SkeletonMovieCard()
+                            }
+                        }
                     }
 
                     uiState.error != null && uiState.movies.isEmpty() -> {
@@ -161,6 +181,7 @@ fun HomeScreen(
 
                     else -> {
                         LazyColumn(
+                            state = listState,
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {

@@ -12,6 +12,7 @@ import com.it2161.s231292a.movieviewer.data.entities.MovieReviewDao
 import com.it2161.s231292a.movieviewer.data.toEntity
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class MovieRepository(
@@ -54,6 +55,10 @@ class MovieRepository(
 
     fun getMoviesByCategoryFlow(category: MovieCategory): Flow<List<Movie>> {
         return movieDao.getMoviesByCategory(category.value)
+    }
+
+    suspend fun getMoviesByCategory(category: MovieCategory): List<Movie> {
+        return movieDao.getMoviesByCategory(category.value).first()
     }
 
     suspend fun refreshMovies(category: MovieCategory): NetworkResource<List<Movie>> {

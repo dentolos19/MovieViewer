@@ -8,6 +8,7 @@ import com.it2161.s231292a.movieviewer.data.NetworkResource
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 import com.it2161.s231292a.movieviewer.ui.states.HomeUiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,7 +41,7 @@ class HomeViewModel(
 
     fun selectCategory(category: MovieCategory) {
         if (_uiState.value.selectedCategory != category) {
-            _uiState.update { it.copy(selectedCategory = category) }
+            _uiState.update { it.copy(selectedCategory = category, movies = emptyList()) }
             loadMovies()
         }
     }
@@ -52,22 +53,30 @@ class HomeViewModel(
             val category = _uiState.value.selectedCategory
             val isOnline = networkMonitor.isCurrentlyConnected()
 
+            // Artificial delay to show skeleton loading
+            val startTime = System.currentTimeMillis()
+
             // First, observe cached data
-            movieRepository.getMoviesByCategoryFlow(category).collect { cachedMovies ->
-                if (cachedMovies.isNotEmpty()) {
-                    _uiState.update { it.copy(movies = cachedMovies) }
-                }
-            }
-        }
+            // We'll collect this in a separate job so we can cancel it if needed or just let it update
+            // However, for the purpose of "clearing everything and showing skeleton", we might want to wait
+            // for the network refresh if we want to enforce the skeleton.
+            // But typically we show cache if available.
+            // The user requirement says "clear everything and show a skeleton loading screen".
+            // So we should probably NOT show cache immediately if we want to show skeleton.
+            // But showing cache is better UX.
+            // Let's follow the requirement: "clear everything".
+            // So I already cleared movies in selectCategory.
 
-        // Then try to refresh from network
-        viewModelScope.launch {
-            val category = _uiState.value.selectedCategory
-            val isOnline = networkMonitor.isCurrentlyConnected()
-
+            // Now we fetch from network.
             if (isOnline) {
                 when (val result = movieRepository.refreshMovies(category)) {
                     is NetworkResource.Success -> {
+                        // Calculate how much time passed
+                        val elapsedTime = System.currentTimeMillis() - startTime
+                        if (elapsedTime < 1000) {
+                            delay(1000 - elapsedTime)
+                        }
+
                         _uiState.update {
                             it.copy(
                                 movies = result.data ?: emptyList(),
@@ -78,10 +87,18 @@ class HomeViewModel(
                     }
 
                     is NetworkResource.Error -> {
+                        // Even on error, we might want to show cached data if available
+                        // But for now let's just show the error or cached data if we have it from repository
+                        // The repository refreshMovies returns data from DB on success.
+                        // On error, we might need to fetch from DB manually if we want to show offline data.
+
+                        val cachedMovies = movieRepository.getMoviesByCategory(category)
+
                         _uiState.update {
                             it.copy(
+                                movies = cachedMovies,
                                 isLoading = false,
-                                error = if (it.movies.isEmpty()) result.message else null
+                                error = if (cachedMovies.isEmpty()) result.message else null
                             )
                         }
                     }
@@ -91,10 +108,13 @@ class HomeViewModel(
                     }
                 }
             } else {
+                // Offline
+                val cachedMovies = movieRepository.getMoviesByCategory(category)
                 _uiState.update {
                     it.copy(
+                        movies = cachedMovies,
                         isLoading = false,
-                        error = if (it.movies.isEmpty()) "No internet connection" else null
+                        error = if (cachedMovies.isEmpty()) "No internet connection" else null
                     )
                 }
             }
