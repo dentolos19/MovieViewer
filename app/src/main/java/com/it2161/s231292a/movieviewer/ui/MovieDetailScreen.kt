@@ -1,5 +1,6 @@
 package com.it2161.s231292a.movieviewer.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -62,6 +63,10 @@ fun MovieDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
+
+    BackHandler {
+        onBackClick()
+    }
 
     Scaffold(
         topBar = {
@@ -232,7 +237,7 @@ fun MovieDetailScreen(
                                 Column(
                                     modifier = Modifier.padding(16.dp)
                                 ) {
-                                    InfoRow("Release Date", movie.releaseDate)
+                                    InfoRow("Release Date", if (movie.releaseDate.isNotEmpty()) movie.releaseDate else "Unknown")
                                     InfoRow("Original Language", movie.originalLanguage.uppercase())
                                     movie.runtime?.let { InfoRow("Runtime", "${it} minutes") }
                                     InfoRow("Vote Count", movie.voteCount.toString())
@@ -253,7 +258,7 @@ fun MovieDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = movie.overview,
+                                text = if (movie.overview.isNotEmpty()) movie.overview else "No description available",
                                 style = MaterialTheme.typography.bodyLarge,
                                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.5
                             )
