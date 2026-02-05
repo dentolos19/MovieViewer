@@ -131,7 +131,7 @@ fun FavoriteMovieCard(
 
                     // Release Year
                     Text(
-                        text = movie.releaseDate.take(4),
+                        text = if (movie.releaseDate.isNotEmpty()) movie.releaseDate.take(4) else "Unknown Year",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Medium
                         ),
@@ -180,7 +180,7 @@ fun FavoriteMovieCard(
 
                     // Overview
                     Text(
-                        text = movie.overview,
+                        text = if (movie.overview.isNotEmpty()) movie.overview else "No description available",
                         style = MaterialTheme.typography.bodySmall.copy(
                             lineHeight = 18.sp
                         ),

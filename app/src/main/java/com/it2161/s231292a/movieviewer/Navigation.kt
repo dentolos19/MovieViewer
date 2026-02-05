@@ -204,16 +204,16 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val movieId = backStackEntry.arguments?.getInt("movieId") ?: return@composable
-                val movieDetailViewModel: MovieDetailViewModel = viewModel(
-                    factory = MovieDetailViewModel.provideFactory(
-                        movieId,
-                        movieRepository,
-                        favoritesRepository,
-                        networkMonitor
-                    )
-                )
+
                 MovieDetailScreen(
-                    viewModel = movieDetailViewModel,
+                    viewModel = viewModel(
+                        factory = MovieDetailViewModel.provideFactory(
+                            movieId,
+                            movieRepository,
+                            favoritesRepository,
+                            networkMonitor
+                        )
+                    ),
                     onBackClick = {
                         if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_DETAIL) {
                             navController.popBackStack()
@@ -232,15 +232,15 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val movieId = backStackEntry.arguments?.getInt("movieId") ?: return@composable
-                val movieReviewsViewModel: MovieReviewsViewModel = viewModel(
-                    factory = MovieReviewsViewModel.provideFactory(
-                        movieId,
-                        movieRepository,
-                        networkMonitor
-                    )
-                )
+
                 MovieReviewsScreen(
-                    viewModel = movieReviewsViewModel,
+                    viewModel = viewModel(
+                        factory = MovieReviewsViewModel.provideFactory(
+                            movieId,
+                            movieRepository,
+                            networkMonitor
+                        )
+                    ),
                     onBackClick = {
                         if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_REVIEWS) {
                             navController.popBackStack()

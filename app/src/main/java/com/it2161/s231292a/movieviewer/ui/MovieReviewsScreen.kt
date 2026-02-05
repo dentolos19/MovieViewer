@@ -204,7 +204,7 @@ private fun ReviewCard(review: MovieReview) {
             val displayText = if (shouldTruncate && !isExpanded) {
                 review.content.take(maxCollapsedLength).trim() + "..."
             } else {
-                review.content
+                if (review.content.isNotEmpty()) review.content else "No review content available"
             }
 
             Text(
