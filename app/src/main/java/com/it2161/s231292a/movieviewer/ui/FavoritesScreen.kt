@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -115,28 +114,15 @@ fun FavoritesScreen(
                                 items = uiState.movies,
                                 key = { it.id }
                             ) { movie ->
-                                Box {
-                                    MovieCard(
-                                        movie = movie,
-                                        onClick = {
-                                            if (uiState.isOnline) {
-                                                onMovieClick(movie.id)
-                                            }
+                                FavoriteMovieCard(
+                                    movie = movie,
+                                    onClick = {
+                                        if (uiState.isOnline) {
+                                            onMovieClick(movie.id)
                                         }
-                                    )
-
-                                    // Delete button overlay
-                                    IconButton(
-                                        onClick = { movieToRemove = movie.id },
-                                        modifier = Modifier.align(Alignment.TopEnd)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Delete,
-                                            contentDescription = "Remove from favorites",
-                                            tint = MaterialTheme.colorScheme.error
-                                        )
-                                    }
-                                }
+                                    },
+                                    onDeleteClick = { movieToRemove = movie.id }
+                                )
                             }
                         }
                     }

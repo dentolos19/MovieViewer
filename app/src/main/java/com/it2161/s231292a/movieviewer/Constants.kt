@@ -1,7 +1,7 @@
 package com.it2161.s231292a.movieviewer
 
 object Constants {
-    val TMDB_API_KEY: String = BuildConfig.TMDB_API_KEY
+    const val TMDB_API_KEY: String = BuildConfig.TMDB_API_KEY
 
     const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"
     const val POSTER_SIZE_W185 = "w185"

@@ -3,12 +3,7 @@ package com.it2161.s231292a.movieviewer
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,22 +20,8 @@ import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.data.repositories.UserRepository
 import com.it2161.s231292a.movieviewer.data.repositories.favoritesDataStore
-import com.it2161.s231292a.movieviewer.ui.FavoritesScreen
-import com.it2161.s231292a.movieviewer.ui.HomeScreen
-import com.it2161.s231292a.movieviewer.ui.LoginScreen
-import com.it2161.s231292a.movieviewer.ui.MovieDetailScreen
-import com.it2161.s231292a.movieviewer.ui.MovieReviewsScreen
-import com.it2161.s231292a.movieviewer.ui.ProfileScreen
-import com.it2161.s231292a.movieviewer.ui.RegisterScreen
-import com.it2161.s231292a.movieviewer.ui.SearchScreen
-import com.it2161.s231292a.movieviewer.ui.models.FavoritesViewModel
-import com.it2161.s231292a.movieviewer.ui.models.HomeViewModel
-import com.it2161.s231292a.movieviewer.ui.models.LoginViewModel
-import com.it2161.s231292a.movieviewer.ui.models.MovieDetailViewModel
-import com.it2161.s231292a.movieviewer.ui.models.MovieReviewsViewModel
-import com.it2161.s231292a.movieviewer.ui.models.ProfileViewModel
-import com.it2161.s231292a.movieviewer.ui.models.RegisterViewModel
-import com.it2161.s231292a.movieviewer.ui.models.SearchViewModel
+import com.it2161.s231292a.movieviewer.ui.*
+import com.it2161.s231292a.movieviewer.ui.models.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,10 +43,10 @@ fun AppNavigation() {
         )
     }
     val favoritesRepository = remember { FavoritesRepository(context.favoritesDataStore) }
-    val networkMonitor = remember { NetworkMonitor(context) }
 
-    // Initialize SessionManager
+    // Initialize session and network
     val sessionManager = remember { SessionManager(context) }
+    val networkMonitor = remember { NetworkMonitor(context) }
 
     // Session state
     var isCheckingSession by remember { mutableStateOf(true) }
@@ -90,11 +71,36 @@ fun AppNavigation() {
             CircularProgressIndicator()
         }
     } else {
+        val loginViewModel: LoginViewModel = viewModel(
+            factory = LoginViewModel.provideFactory(userRepository)
+        )
+
+        val registerViewModel: RegisterViewModel = viewModel(
+            factory = RegisterViewModel.provideFactory(userRepository)
+        )
+
+        val homeViewModel: HomeViewModel = viewModel(
+            factory = HomeViewModel.provideFactory(movieRepository, networkMonitor)
+        )
+
+        val profileViewModel: ProfileViewModel = viewModel(
+            factory = ProfileViewModel.provideFactory(userRepository)
+        )
+
+        val favoritesViewModel: FavoritesViewModel = viewModel(
+            factory = FavoritesViewModel.provideFactory(
+                movieRepository,
+                favoritesRepository,
+                networkMonitor
+            )
+        )
+
+        val searchViewModel: SearchViewModel = viewModel(
+            factory = SearchViewModel.provideFactory(movieRepository, networkMonitor)
+        )
+
         NavHost(navController = navController, startDestination = startDestination) {
             composable(Routes.LOGIN) {
-                val loginViewModel: LoginViewModel = viewModel(
-                    factory = LoginViewModel.provideFactory(userRepository)
-                )
                 LoginScreen(
                     viewModel = loginViewModel,
                     onLoginSuccess = {
@@ -113,9 +119,6 @@ fun AppNavigation() {
             }
 
             composable(Routes.REGISTER) {
-                val registerViewModel: RegisterViewModel = viewModel(
-                    factory = RegisterViewModel.provideFactory(userRepository)
-                )
                 RegisterScreen(
                     viewModel = registerViewModel,
                     onRegisterSuccess = {
@@ -134,9 +137,6 @@ fun AppNavigation() {
             }
 
             composable(Routes.HOME) {
-                val homeViewModel: HomeViewModel = viewModel(
-                    factory = HomeViewModel.provideFactory(movieRepository, networkMonitor)
-                )
                 HomeScreen(
                     viewModel = homeViewModel,
                     onMovieClick = { movieId ->
@@ -163,9 +163,6 @@ fun AppNavigation() {
             }
 
             composable(Routes.PROFILE) {
-                val profileViewModel: ProfileViewModel = viewModel(
-                    factory = ProfileViewModel.provideFactory(userRepository)
-                )
                 ProfileScreen(
                     viewModel = profileViewModel,
                     onBackClick = {
@@ -187,13 +184,6 @@ fun AppNavigation() {
             }
 
             composable(Routes.FAVORITES) {
-                val favoritesViewModel: FavoritesViewModel = viewModel(
-                    factory = FavoritesViewModel.provideFactory(
-                        movieRepository,
-                        favoritesRepository,
-                        networkMonitor
-                    )
-                )
                 FavoritesScreen(
                     viewModel = favoritesViewModel,
                     onMovieClick = { movieId ->
@@ -260,9 +250,6 @@ fun AppNavigation() {
             }
 
             composable(Routes.SEARCH) {
-                val searchViewModel: SearchViewModel = viewModel(
-                    factory = SearchViewModel.provideFactory(movieRepository, networkMonitor)
-                )
                 SearchScreen(
                     viewModel = searchViewModel,
                     onMovieClick = { movieId ->
