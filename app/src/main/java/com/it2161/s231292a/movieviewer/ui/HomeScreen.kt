@@ -33,15 +33,6 @@ fun HomeScreen(
     onFavoritesClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedNavItem by remember {
-        mutableStateOf(
-            NavItem(
-                MovieCategory.POPULAR,
-                "Popular",
-                Icons.Filled.Star
-            )
-        )
-    }
     var showDropdownMenu by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -52,6 +43,10 @@ fun HomeScreen(
         NavItem(MovieCategory.NOW_PLAYING, "Now Playing", Icons.Filled.PlayArrow),
         NavItem(MovieCategory.UPCOMING, "Upcoming", Icons.Filled.DateRange)
     )
+
+    val selectedNavItem = remember(uiState.selectedCategory) {
+        navItems.first { it.category == uiState.selectedCategory }
+    }
 
     LaunchedEffect(uiState.error) {
         if (uiState.error != null && uiState.movies.isNotEmpty()) {
@@ -128,7 +123,6 @@ fun HomeScreen(
                         selected = selectedNavItem == navItem,
                         onClick = {
                             if (selectedNavItem != navItem) {
-                                selectedNavItem = navItem
                                 viewModel.selectCategory(navItem.category)
                                 coroutineScope.launch {
                                     listState.scrollToItem(0)
