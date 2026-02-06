@@ -8,11 +8,13 @@ import com.it2161.s231292a.movieviewer.data.NetworkResource
 import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.ui.states.MovieDetailUiState
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MovieDetailViewModel(
     private val movieId: Int,
@@ -108,7 +110,9 @@ class MovieDetailViewModel(
 
     fun toggleFavorite() {
         viewModelScope.launch {
-            favoritesRepository.toggleFavorite(movieId)
+            withContext(NonCancellable) {
+                favoritesRepository.toggleFavorite(movieId)
+            }
         }
     }
 

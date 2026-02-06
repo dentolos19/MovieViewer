@@ -1,5 +1,3 @@
-// From my other assignment, FitNest.
-
 package com.it2161.s231292a.movieviewer.ui.components
 
 import androidx.compose.foundation.clickable

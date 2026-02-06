@@ -116,11 +116,7 @@ fun FavoritesScreen(
                             ) { movie ->
                                 FavoriteMovieCard(
                                     movie = movie,
-                                    onClick = {
-                                        if (uiState.isOnline) {
-                                            onMovieClick(movie.id)
-                                        }
-                                    },
+                                    onClick = { onMovieClick(movie.id) },
                                     onDeleteClick = { movieToRemove = movie.id }
                                 )
                             }

@@ -115,8 +115,7 @@ class MovieRepository(
                 movieReviewDao.replaceReviewsForMovie(movieId, entities)
                 NetworkResource.Success(entities)
             } else {
-                val cached = mutableListOf<MovieReview>()
-                movieReviewDao.getReviewsByMovieId(movieId).collect { cached.addAll(it) }
+                val cached = movieReviewDao.getReviewsByMovieId(movieId).first()
                 if (cached.isNotEmpty()) {
                     NetworkResource.Success(cached)
                 } else {
