@@ -80,7 +80,7 @@ fun AppNavigation() {
         )
 
         val homeViewModel: HomeViewModel = viewModel(
-            factory = HomeViewModel.provideFactory(movieRepository, networkMonitor)
+            factory = HomeViewModel.provideFactory(movieRepository, favoritesRepository, networkMonitor)
         )
 
         val profileViewModel: ProfileViewModel = viewModel(
@@ -96,7 +96,7 @@ fun AppNavigation() {
         )
 
         val searchViewModel: SearchViewModel = viewModel(
-            factory = SearchViewModel.provideFactory(movieRepository, networkMonitor)
+            factory = SearchViewModel.provideFactory(movieRepository, favoritesRepository, networkMonitor)
         )
 
         NavHost(navController = navController, startDestination = startDestination) {

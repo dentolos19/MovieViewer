@@ -9,5 +9,5 @@ data class SearchUiState(
     val query: String = "",
     val hasSearched: Boolean = false,
     val results: List<Movie> = emptyList(),
+    val favoriteMovieIds: Set<Int> = emptySet()
 )
-

@@ -163,6 +163,10 @@ fun HomeScreen(
                         }
                     }
 
+                    !uiState.isOnline && uiState.movies.isEmpty() -> {
+                        OfflineState()
+                    }
+
                     uiState.error != null && uiState.movies.isEmpty() -> {
                         ErrorState(message = uiState.error!!)
                     }
@@ -186,7 +190,8 @@ fun HomeScreen(
                             ) { movie ->
                                 MovieCard(
                                     movie = movie,
-                                    onClick = { onMovieClick(movie.id) }
+                                    onClick = { onMovieClick(movie.id) },
+                                    isFavorite = uiState.favoriteMovieIds.contains(movie.id)
                                 )
                             }
                         }

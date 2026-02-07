@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.it2161.s231292a.movieviewer.data.NetworkMonitor
 import com.it2161.s231292a.movieviewer.data.NetworkResource
+import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 import com.it2161.s231292a.movieviewer.ui.states.HomeUiState
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val movieRepository: MovieRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -24,6 +26,7 @@ class HomeViewModel(
 
     init {
         observeNetworkStatus()
+        observeFavorites()
         loadMovies()
     }
 
@@ -35,6 +38,14 @@ class HomeViewModel(
                 if (isOnline && _uiState.value.error != null) {
                     loadMovies()
                 }
+            }
+        }
+    }
+
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            favoritesRepository.favoriteMovieIds.collect { favoriteIds ->
+                _uiState.update { it.copy(favoriteMovieIds = favoriteIds) }
             }
         }
     }
@@ -169,12 +180,13 @@ class HomeViewModel(
     companion object {
         fun provideFactory(
             movieRepository: MovieRepository,
+            favoritesRepository: FavoritesRepository,
             networkMonitor: NetworkMonitor
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return HomeViewModel(movieRepository, networkMonitor) as T
+                    return HomeViewModel(movieRepository, favoritesRepository, networkMonitor) as T
                 }
             }
         }

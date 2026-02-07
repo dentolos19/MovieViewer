@@ -125,7 +125,8 @@ fun SearchScreen(
                         ) { movie ->
                             MovieCard(
                                 movie = movie,
-                                onClick = { onMovieClick(movie.id) }
+                                onClick = { onMovieClick(movie.id) },
+                                isFavorite = uiState.favoriteMovieIds.contains(movie.id)
                             )
                         }
                     }

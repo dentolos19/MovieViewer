@@ -110,12 +110,12 @@ fun MovieDetailScreen(
             NetworkStatusBanner(isOnline = uiState.isOnline)
 
             when {
-                !uiState.isOnline -> {
-                    OfflineState()
-                }
-
                 uiState.isLoading && uiState.movieDetail == null -> {
                     LoadingIndicator()
+                }
+
+                !uiState.isOnline && uiState.movieDetail == null -> {
+                    OfflineState()
                 }
 
                 uiState.error != null && uiState.movieDetail == null -> {

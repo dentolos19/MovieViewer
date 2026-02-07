@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.it2161.s231292a.movieviewer.data.NetworkMonitor
 import com.it2161.s231292a.movieviewer.data.NetworkResource
+import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.ui.states.SearchUiState
 import kotlinx.coroutines.Job
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val movieRepository: MovieRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -26,12 +28,21 @@ class SearchViewModel(
 
     init {
         observeNetworkStatus()
+        observeFavorites()
     }
 
     private fun observeNetworkStatus() {
         viewModelScope.launch {
             networkMonitor.isOnline.collect { isOnline ->
                 _uiState.update { it.copy(isOnline = isOnline) }
+            }
+        }
+    }
+
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            favoritesRepository.favoriteMovieIds.collect { favoriteIds ->
+                _uiState.update { it.copy(favoriteMovieIds = favoriteIds) }
             }
         }
     }
@@ -106,12 +117,13 @@ class SearchViewModel(
     companion object {
         fun provideFactory(
             movieRepository: MovieRepository,
+            favoritesRepository: FavoritesRepository,
             networkMonitor: NetworkMonitor
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SearchViewModel(movieRepository, networkMonitor) as T
+                    return SearchViewModel(movieRepository, favoritesRepository, networkMonitor) as T
                 }
             }
         }

@@ -10,4 +10,5 @@ data class HomeUiState(
     val error: String? = null,
     val movies: List<Movie> = emptyList(),
     val selectedCategory: MovieCategory = MovieCategory.POPULAR,
+    val favoriteMovieIds: Set<Int> = emptySet()
 )
