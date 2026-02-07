@@ -2,14 +2,14 @@ package com.it2161.s231292a.movieviewer
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.it2161.s231292a.movieviewer.data.AppDatabase
+import com.it2161.s231292a.movieviewer.data.Database
 import com.it2161.s231292a.movieviewer.data.entities.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SessionManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val dao = AppDatabase.getDatabase(context).userDao()
+    private val dao = Database.getDatabase(context).userDao()
 
     suspend fun saveSession(user: User) {
         withContext(Dispatchers.IO) {

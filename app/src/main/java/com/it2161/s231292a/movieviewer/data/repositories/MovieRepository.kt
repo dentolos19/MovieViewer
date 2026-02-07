@@ -1,19 +1,13 @@
 package com.it2161.s231292a.movieviewer.data.repositories
 
 import com.it2161.s231292a.movieviewer.Constants
-import com.it2161.s231292a.movieviewer.data.NetworkResource
 import com.it2161.s231292a.movieviewer.data.MovieService
-import com.it2161.s231292a.movieviewer.data.entities.Movie
-import com.it2161.s231292a.movieviewer.data.entities.MovieDao
-import com.it2161.s231292a.movieviewer.data.entities.MovieDetail
-import com.it2161.s231292a.movieviewer.data.entities.MovieDetailDao
-import com.it2161.s231292a.movieviewer.data.entities.MovieReview
-import com.it2161.s231292a.movieviewer.data.entities.MovieReviewDao
+import com.it2161.s231292a.movieviewer.data.NetworkResource
+import com.it2161.s231292a.movieviewer.data.entities.*
 import com.it2161.s231292a.movieviewer.data.toEntity
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 
 class MovieRepository(
     private val apiService: MovieService,
@@ -21,41 +15,6 @@ class MovieRepository(
     private val movieDetailDao: MovieDetailDao,
     private val movieReviewDao: MovieReviewDao
 ) {
-    fun getMoviesByCategory(category: MovieCategory, isOnline: Boolean): Flow<NetworkResource<List<Movie>>> = flow {
-        emit(NetworkResource.Loading())
-
-        // Always try to emit cached data first
-        val cachedMovies = movieDao.getMoviesByCategory(category.value)
-
-        cachedMovies.collect { movies ->
-            if (isOnline) {
-                try {
-                    val response = when (category) {
-                        MovieCategory.POPULAR -> apiService.getPopularMovies(Constants.TMDB_API_KEY)
-                        MovieCategory.TOP_RATED -> apiService.getTopRatedMovies(Constants.TMDB_API_KEY)
-                        MovieCategory.NOW_PLAYING -> apiService.getNowPlayingMovies(Constants.TMDB_API_KEY)
-                        MovieCategory.UPCOMING -> apiService.getUpcomingMovies(Constants.TMDB_API_KEY)
-                    }
-
-                    val entities = response.results.map { it.toEntity(category.value) }
-                    movieDao.replaceMoviesByCategory(category.value, entities)
-                    emit(NetworkResource.Success(entities))
-                } catch (e: Exception) {
-                    emit(NetworkResource.Error(e.message ?: "Failed to fetch movies", movies))
-                }
-            } else {
-                if (movies.isNotEmpty()) {
-                    emit(NetworkResource.Success(movies))
-                } else {
-                    emit(NetworkResource.Error("No cached data available", movies))
-                }
-            }
-        }
-    }
-
-    fun getMoviesByCategoryFlow(category: MovieCategory): Flow<List<Movie>> {
-        return movieDao.getMoviesByCategory(category.value)
-    }
 
     suspend fun getMoviesByCategory(category: MovieCategory): List<Movie> {
         return movieDao.getMoviesByCategory(category.value).first()
@@ -103,10 +62,6 @@ class MovieRepository(
         }
     }
 
-    fun getMovieDetailFlow(movieId: Int): Flow<MovieDetail?> {
-        return movieDetailDao.getMovieDetailByIdFlow(movieId)
-    }
-
     suspend fun getMovieReviews(movieId: Int, isOnline: Boolean): NetworkResource<List<MovieReview>> {
         return try {
             if (isOnline) {
@@ -127,10 +82,6 @@ class MovieRepository(
         }
     }
 
-    fun getReviewsFlow(movieId: Int): Flow<List<MovieReview>> {
-        return movieReviewDao.getReviewsByMovieId(movieId)
-    }
-
     suspend fun searchMovies(query: String, isOnline: Boolean): NetworkResource<List<Movie>> {
         return try {
             if (isOnline && query.isNotBlank()) {
@@ -146,10 +97,6 @@ class MovieRepository(
         } catch (e: Exception) {
             NetworkResource.Error(e.message ?: "Search failed")
         }
-    }
-
-    fun getMoviesByIds(ids: List<Int>): Flow<List<Movie>> {
-        return movieDao.getMoviesByIds(ids)
     }
 
     fun getMovieDetailsByIds(ids: List<Int>): Flow<List<MovieDetail>> {

@@ -2,7 +2,6 @@ package com.it2161.s231292a.movieviewer.data.repositories
 
 import com.it2161.s231292a.movieviewer.data.entities.User
 import com.it2161.s231292a.movieviewer.data.entities.UserDao
-import kotlinx.coroutines.flow.Flow
 
 class UserRepository(private val userDao: UserDao) {
 
@@ -32,14 +31,6 @@ class UserRepository(private val userDao: UserDao) {
         }
     }
 
-    suspend fun getUserById(userId: String): User? {
-        return userDao.getUserById(userId)
-    }
-
-    fun getUserByIdFlow(userId: String): Flow<User?> {
-        return userDao.getUserByIdFlow(userId)
-    }
-
     suspend fun updateUser(user: User): Result<Unit> {
         return try {
             userDao.updateUser(user)
@@ -47,9 +38,5 @@ class UserRepository(private val userDao: UserDao) {
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
-
-    suspend fun userExists(userId: String): Boolean {
-        return userDao.userExists(userId)
     }
 }

@@ -47,9 +47,4 @@ data class MovieDetailDto(
     val imdbId: String?
 )
 
-data class MovieGenreDto(
-    @SerializedName("id")
-    val id: Int,
-    @SerializedName("name")
-    val name: String
-)
+

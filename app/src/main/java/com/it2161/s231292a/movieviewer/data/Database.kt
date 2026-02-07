@@ -1,19 +1,12 @@
 package com.it2161.s231292a.movieviewer.data
 
-import com.it2161.s231292a.movieviewer.data.entities.Movie
-import com.it2161.s231292a.movieviewer.data.entities.MovieDao
-import com.it2161.s231292a.movieviewer.data.entities.MovieDetail
-import com.it2161.s231292a.movieviewer.data.entities.MovieDetailDao
-import com.it2161.s231292a.movieviewer.data.entities.MovieReview
-import com.it2161.s231292a.movieviewer.data.entities.MovieReviewDao
-import com.it2161.s231292a.movieviewer.data.entities.User
-import com.it2161.s231292a.movieviewer.data.entities.UserDao
 import android.content.Context
-import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.it2161.s231292a.movieviewer.data.entities.*
+import androidx.room.Database as RoomDatabaseAnnotation
 
-@Database(
+@RoomDatabaseAnnotation(
     entities = [
         User::class,
         Movie::class,
@@ -23,7 +16,7 @@ import androidx.room.RoomDatabase
     version = 2,
     exportSchema = false
 )
-abstract class AppDatabase : RoomDatabase() {
+abstract class Database : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun movieDao(): MovieDao
     abstract fun movieDetailDao(): MovieDetailDao
@@ -31,13 +24,13 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var INSTANCE: Database? = null
 
-        fun getDatabase(context: Context): AppDatabase {
+        fun getDatabase(context: Context): Database {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDatabase::class.java,
+                    Database::class.java,
                     "database"
                 )
                     .fallbackToDestructiveMigration(dropAllTables = true)

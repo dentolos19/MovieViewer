@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.it2161.s231292a.movieviewer.data.AppDatabase
+import com.it2161.s231292a.movieviewer.data.Database
 import com.it2161.s231292a.movieviewer.data.MovieApi
 import com.it2161.s231292a.movieviewer.data.NetworkMonitor
 import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
@@ -32,7 +32,7 @@ fun AppNavigation() {
     val context = LocalContext.current
 
     // Initialize database and repositories
-    val database = remember { AppDatabase.getDatabase(context) }
+    val database = remember { Database.getDatabase(context) }
     val userRepository = remember { UserRepository(database.userDao()) }
     val movieRepository = remember {
         MovieRepository(

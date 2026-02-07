@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.it2161.s231292a.movieviewer.ui
 
 import androidx.compose.foundation.layout.*
@@ -23,7 +25,6 @@ private data class NavItem(
     val icon: ImageVector
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
@@ -70,7 +71,7 @@ fun HomeScreen(
                     Box {
                         IconButton(onClick = { showDropdownMenu = true }) {
                             Icon(
-                                imageVector = Icons.Filled.Menu,
+                                imageVector = Icons.Filled.MoreVert,
                                 contentDescription = "Menu"
                             )
                         }
