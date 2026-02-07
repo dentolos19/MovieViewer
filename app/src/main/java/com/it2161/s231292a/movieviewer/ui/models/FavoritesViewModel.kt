@@ -114,6 +114,12 @@ class FavoritesViewModel(
         }
     }
 
+    fun addToFavorites(movieId: Int) {
+        viewModelScope.launch {
+            favoritesRepository.addToFavorites(movieId)
+        }
+    }
+
     companion object {
         fun provideFactory(
             movieRepository: MovieRepository,

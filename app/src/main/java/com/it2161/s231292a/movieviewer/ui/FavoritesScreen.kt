@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.FavoritesViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +26,8 @@ fun FavoritesScreen(
     val uiState by viewModel.uiState.collectAsState()
     var movieToRemove by remember { mutableStateOf<Int?>(null) }
     val pullRefreshState = rememberPullToRefreshState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     // Confirmation Dialog
     if (movieToRemove != null) {
@@ -35,7 +38,19 @@ fun FavoritesScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        movieToRemove?.let { viewModel.removeFromFavorites(it) }
+                        movieToRemove?.let { movieId ->
+                            viewModel.removeFromFavorites(movieId)
+                            scope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = "Removed from favorites",
+                                    actionLabel = "Undo",
+                                    duration = SnackbarDuration.Short
+                                )
+                                if (result == SnackbarResult.ActionPerformed) {
+                                    viewModel.addToFavorites(movieId)
+                                }
+                            }
+                        }
                         movieToRemove = null
                     }
                 ) {
@@ -51,6 +66,7 @@ fun FavoritesScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             AppHeader(
                 title = "Favorites",

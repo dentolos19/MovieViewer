@@ -9,9 +9,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -26,11 +24,9 @@ import com.google.gson.reflect.TypeToken
 import com.it2161.s231292a.movieviewer.Constants
 import com.it2161.s231292a.movieviewer.R
 import com.it2161.s231292a.movieviewer.data.dto.MovieGenreDto
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.ErrorState
-import com.it2161.s231292a.movieviewer.ui.components.LoadingIndicator
-import com.it2161.s231292a.movieviewer.ui.components.NetworkStatusBanner
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.MovieDetailViewModel
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 
@@ -59,28 +55,48 @@ private fun InfoRow(label: String, value: String) {
 fun MovieDetailScreen(
     viewModel: MovieDetailViewModel,
     onBackClick: () -> Unit,
-    onViewReviewsClick: (Int) -> Unit
+    onViewReviewsClick: (Int) -> Unit,
+    onFavoritesClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     BackHandler {
         onBackClick()
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             AppHeader(
                 title = uiState.movieDetail?.title ?: "Movie Details",
                 canNavigateBack = true,
                 onNavigateBack = onBackClick,
                 actions = {
-                    IconButton(onClick = { viewModel.toggleFavorite() }) {
-                        Icon(
-                            imageVector = if (uiState.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                            contentDescription = if (uiState.isFavorite) "Remove from favorites" else "Add to favorites",
-                            tint = if (uiState.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
-                        )
+                    if (uiState.movieDetail != null) {
+                        IconButton(onClick = {
+                            viewModel.toggleFavorite()
+                            scope.launch {
+                                val message =
+                                    if (!uiState.isFavorite) "Added to favorites" else "Removed from favorites"
+                                val result = snackbarHostState.showSnackbar(
+                                    message = message,
+                                    actionLabel = if (!uiState.isFavorite) "View" else null,
+                                    duration = SnackbarDuration.Short
+                                )
+                                if (result == SnackbarResult.ActionPerformed) {
+                                    onFavoritesClick()
+                                }
+                            }
+                        }) {
+                            Icon(
+                                imageVector = if (uiState.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                contentDescription = if (uiState.isFavorite) "Remove from favorites" else "Add to favorites",
+                                tint = if (uiState.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             )
@@ -94,6 +110,10 @@ fun MovieDetailScreen(
             NetworkStatusBanner(isOnline = uiState.isOnline)
 
             when {
+                !uiState.isOnline -> {
+                    OfflineState()
+                }
+
                 uiState.isLoading && uiState.movieDetail == null -> {
                     LoadingIndicator()
                 }
@@ -127,7 +147,7 @@ fun MovieDetailScreen(
                             )
                         } else {
                             // Fallback if backdropPath is null
-                             AsyncImage(
+                            AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(null)
                                     .crossfade(true)
@@ -237,7 +257,10 @@ fun MovieDetailScreen(
                                 Column(
                                     modifier = Modifier.padding(16.dp)
                                 ) {
-                                    InfoRow("Release Date", if (movie.releaseDate.isNotEmpty()) movie.releaseDate else "Unknown")
+                                    InfoRow(
+                                        "Release Date",
+                                        if (movie.releaseDate.isNotEmpty()) movie.releaseDate else "Unknown"
+                                    )
                                     InfoRow("Original Language", movie.originalLanguage.uppercase())
                                     movie.runtime?.let { InfoRow("Runtime", "${it} minutes") }
                                     InfoRow("Vote Count", movie.voteCount.toString())
@@ -339,7 +362,10 @@ fun MovieDetailScreen(
                                                         )
                                                     ) {
                                                         Row(
-                                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                                            modifier = Modifier.padding(
+                                                                horizontal = 8.dp,
+                                                                vertical = 4.dp
+                                                            ),
                                                             verticalAlignment = Alignment.CenterVertically
                                                         ) {
                                                             Icon(

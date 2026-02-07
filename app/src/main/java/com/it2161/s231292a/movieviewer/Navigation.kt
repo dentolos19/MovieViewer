@@ -223,6 +223,11 @@ fun AppNavigation() {
                         if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_DETAIL) {
                             navController.navigate(Routes.movieReviews(id))
                         }
+                    },
+                    onFavoritesClick = {
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.MOVIE_DETAIL) {
+                            navController.navigate(Routes.FAVORITES)
+                        }
                     }
                 )
             }
@@ -260,6 +265,11 @@ fun AppNavigation() {
                     onBackClick = {
                         if (navController.currentBackStackEntry?.destination?.route == Routes.SEARCH) {
                             navController.popBackStack()
+                        }
+                    },
+                    onFavoritesClick = {
+                        if (navController.currentBackStackEntry?.destination?.route == Routes.SEARCH) {
+                            navController.navigate(Routes.FAVORITES)
                         }
                     }
                 )

@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,7 +24,8 @@ import com.it2161.s231292a.movieviewer.ui.models.SearchViewModel
 fun SearchScreen(
     viewModel: SearchViewModel,
     onMovieClick: (Int) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -33,7 +35,15 @@ fun SearchScreen(
             AppHeader(
                 title = "Search Movies",
                 canNavigateBack = true,
-                onNavigateBack = onBackClick
+                onNavigateBack = onBackClick,
+                actions = {
+                    IconButton(onClick = onFavoritesClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = "Favorites"
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
