@@ -82,7 +82,7 @@ fun FavoritesScreen(
                         }
                     }
 
-                    uiState.movies.isEmpty() -> {
+                    uiState.movies.isEmpty() && uiState.loadingMovieIds.isEmpty() -> {
                         // Wrap in LazyColumn to ensure pull-to-refresh works even when empty
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
@@ -119,6 +119,13 @@ fun FavoritesScreen(
                                     onClick = { onMovieClick(movie.id) },
                                     onDeleteClick = { movieToRemove = movie.id }
                                 )
+                            }
+
+                            items(
+                                count = uiState.loadingMovieIds.size,
+                                key = { index -> "loading_${uiState.loadingMovieIds.elementAt(index)}" }
+                            ) {
+                                SkeletonMovieCard()
                             }
                         }
                     }

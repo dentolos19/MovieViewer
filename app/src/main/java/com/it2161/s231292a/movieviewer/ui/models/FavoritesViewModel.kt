@@ -49,7 +49,18 @@ class FavoritesViewModel(
                         flowOf(emptyList())
                     } else {
                         movieRepository.getMovieDetailsByIds(favoriteIds.toList())
-                            .map { details -> details.map { it.toMovie() } }
+                            .map { cachedDetails ->
+                                val cachedMovies = cachedDetails.map { it.toMovie() }
+                                val cachedIds = cachedDetails.map { it.id }.toSet()
+                                val missingIds = favoriteIds - cachedIds
+
+                                if (missingIds.isNotEmpty() && _uiState.value.isOnline) {
+                                    _uiState.update { it.copy(loadingMovieIds = missingIds) }
+                                    fetchMissingMovieDetails(missingIds)
+                                }
+
+                                cachedMovies
+                            }
                     }
                 }
                 .collect { movies ->
@@ -60,6 +71,29 @@ class FavoritesViewModel(
                         )
                     }
                 }
+        }
+    }
+
+    private fun fetchMissingMovieDetails(movieIds: Set<Int>) {
+        viewModelScope.launch {
+            movieIds.forEach { movieId ->
+                try {
+                    val result = movieRepository.getMovieDetail(movieId, _uiState.value.isOnline)
+                    if (result is com.it2161.s231292a.movieviewer.data.NetworkResource.Success) {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                loadingMovieIds = currentState.loadingMovieIds - movieId
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            loadingMovieIds = currentState.loadingMovieIds - movieId
+                        )
+                    }
+                }
+            }
         }
     }
 

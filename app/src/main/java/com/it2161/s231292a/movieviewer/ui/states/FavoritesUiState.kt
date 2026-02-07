@@ -8,4 +8,5 @@ data class FavoritesUiState(
     val isOnline: Boolean = true,
     val error: String? = null,
     val movies: List<Movie> = emptyList(),
+    val loadingMovieIds: Set<Int> = emptySet()
 )

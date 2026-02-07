@@ -12,4 +12,3 @@ data class MovieDetailUiState(
     val movieDetail: MovieDetail? = null,
     val reviews: List<MovieReview> = emptyList(),
 )
-
