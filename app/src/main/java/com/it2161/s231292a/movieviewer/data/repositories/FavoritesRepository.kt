@@ -20,27 +20,30 @@ class FavoritesRepository(private val dataStore: DataStore<Preferences>) {
 
     suspend fun addToFavorites(movieId: Int) {
         dataStore.edit { preferences ->
-            val currentFavorites = preferences[favoritesKey] ?: emptySet()
-            preferences[favoritesKey] = currentFavorites + movieId.toString()
+            val currentFavorites = preferences[favoritesKey]?.toMutableSet() ?: mutableSetOf()
+            currentFavorites.add(movieId.toString())
+            preferences[favoritesKey] = currentFavorites.toSet()
         }
     }
 
     suspend fun removeFromFavorites(movieId: Int) {
         dataStore.edit { preferences ->
-            val currentFavorites = preferences[favoritesKey] ?: emptySet()
-            preferences[favoritesKey] = currentFavorites - movieId.toString()
+            val currentFavorites = preferences[favoritesKey]?.toMutableSet() ?: mutableSetOf()
+            currentFavorites.remove(movieId.toString())
+            preferences[favoritesKey] = currentFavorites.toSet()
         }
     }
 
     suspend fun toggleFavorite(movieId: Int) {
         dataStore.edit { preferences ->
-            val currentFavorites = preferences[favoritesKey] ?: emptySet()
+            val currentFavorites = preferences[favoritesKey]?.toMutableSet() ?: mutableSetOf()
             val movieIdString = movieId.toString()
-            preferences[favoritesKey] = if (currentFavorites.contains(movieIdString)) {
-                currentFavorites - movieIdString
+            if (currentFavorites.contains(movieIdString)) {
+                currentFavorites.remove(movieIdString)
             } else {
-                currentFavorites + movieIdString
+                currentFavorites.add(movieIdString)
             }
+            preferences[favoritesKey] = currentFavorites.toSet()
         }
     }
 

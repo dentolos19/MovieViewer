@@ -152,6 +152,10 @@ class MovieRepository(
         return movieDao.getMoviesByIds(ids)
     }
 
+    fun getMovieDetailsByIds(ids: List<Int>): Flow<List<MovieDetail>> {
+        return movieDetailDao.getMovieDetailsByIds(ids)
+    }
+
     suspend fun getMovieById(movieId: Int): Movie? {
         return movieDao.getMovieById(movieId)
     }

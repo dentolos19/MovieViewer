@@ -57,6 +57,27 @@ fun MovieDetailDto.toEntity(): MovieDetail {
     )
 }
 
+fun MovieDetail.toMovie(): Movie {
+    return Movie(
+        id = id,
+        title = title,
+        originalTitle = originalTitle,
+        originalLanguage = originalLanguage,
+        overview = overview,
+        posterPath = posterPath,
+        backdropPath = backdropPath,
+        releaseDate = releaseDate,
+        voteAverage = voteAverage,
+        voteCount = voteCount,
+        popularity = popularity,
+        adult = adult,
+        video = video,
+        genreIds = "",
+        category = "favorite",
+        cachedAt = cachedAt
+    )
+}
+
 fun MovieReviewDto.toEntity(movieId: Int): MovieReview {
     return MovieReview(
         id = id,

@@ -22,4 +22,7 @@ interface MovieDetailDao {
 
     @Query("DELETE FROM movie_details")
     suspend fun deleteAllMovieDetails()
+
+    @Query("SELECT * FROM movie_details WHERE id IN (:ids)")
+    fun getMovieDetailsByIds(ids: List<Int>): Flow<List<MovieDetail>>
 }

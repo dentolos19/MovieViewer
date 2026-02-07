@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.it2161.s231292a.movieviewer.data.toMovie
 
 class FavoritesViewModel(
     private val movieRepository: MovieRepository,
@@ -46,7 +48,8 @@ class FavoritesViewModel(
                     if (favoriteIds.isEmpty()) {
                         flowOf(emptyList())
                     } else {
-                        movieRepository.getMoviesByIds(favoriteIds.toList())
+                        movieRepository.getMovieDetailsByIds(favoriteIds.toList())
+                            .map { details -> details.map { it.toMovie() } }
                     }
                 }
                 .collect { movies ->
