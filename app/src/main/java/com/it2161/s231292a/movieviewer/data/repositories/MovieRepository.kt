@@ -20,17 +20,21 @@ class MovieRepository(
         return movieDao.getMoviesByCategory(category.value).first()
     }
 
-    suspend fun refreshMovies(category: MovieCategory): NetworkResource<List<Movie>> {
+    suspend fun refreshMovies(category: MovieCategory, page: Int = 1): NetworkResource<List<Movie>> {
         return try {
             val response = when (category) {
-                MovieCategory.POPULAR -> apiService.getPopularMovies(Constants.TMDB_API_KEY)
-                MovieCategory.TOP_RATED -> apiService.getTopRatedMovies(Constants.TMDB_API_KEY)
-                MovieCategory.NOW_PLAYING -> apiService.getNowPlayingMovies(Constants.TMDB_API_KEY)
-                MovieCategory.UPCOMING -> apiService.getUpcomingMovies(Constants.TMDB_API_KEY)
+                MovieCategory.POPULAR -> apiService.getPopularMovies(Constants.TMDB_API_KEY, page = page)
+                MovieCategory.TOP_RATED -> apiService.getTopRatedMovies(Constants.TMDB_API_KEY, page = page)
+                MovieCategory.NOW_PLAYING -> apiService.getNowPlayingMovies(Constants.TMDB_API_KEY, page = page)
+                MovieCategory.UPCOMING -> apiService.getUpcomingMovies(Constants.TMDB_API_KEY, page = page)
             }
 
             val entities = response.results.map { it.toEntity(category.value) }
-            movieDao.replaceMoviesByCategory(category.value, entities)
+            if (page == 1) {
+                movieDao.replaceMoviesByCategory(category.value, entities)
+            } else {
+                movieDao.insertMovies(entities)
+            }
             NetworkResource.Success(entities)
         } catch (e: Exception) {
             NetworkResource.Error(e.message ?: "Failed to fetch movies")
@@ -82,12 +86,13 @@ class MovieRepository(
         }
     }
 
-    suspend fun searchMovies(query: String, isOnline: Boolean): NetworkResource<List<Movie>> {
+    suspend fun searchMovies(query: String, isOnline: Boolean, page: Int = 1): NetworkResource<List<Movie>> {
         return try {
             if (isOnline && query.isNotBlank()) {
                 val response = apiService.searchMovies(
                     apiKey = Constants.TMDB_API_KEY,
-                    query = query
+                    query = query,
+                    page = page
                 )
                 val entities = response.results.map { it.toEntity("search") }
                 NetworkResource.Success(entities)

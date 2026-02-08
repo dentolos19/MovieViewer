@@ -55,6 +55,23 @@ fun HomeScreen(
         }
     }
 
+    // Infinite scroll detection
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val totalItemsNumber = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
+
+            lastVisibleItemIndex > (totalItemsNumber - 5)
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value && uiState.canLoadMore && !uiState.isLoading) {
+            viewModel.loadNextPage()
+        }
+    }
+
     Scaffold(
         topBar = {
             AppHeader(
@@ -152,7 +169,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 when {
-                    uiState.isLoading -> {
+                    uiState.isLoading && uiState.movies.isEmpty() -> {
                         LazyColumn(
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -193,6 +210,19 @@ fun HomeScreen(
                                     onClick = { onMovieClick(movie.id) },
                                     isFavorite = uiState.favoriteMovieIds.contains(movie.id)
                                 )
+                            }
+
+                            if (uiState.isLoading && uiState.movies.isNotEmpty()) {
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = androidx.compose.ui.Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
                             }
                         }
                     }

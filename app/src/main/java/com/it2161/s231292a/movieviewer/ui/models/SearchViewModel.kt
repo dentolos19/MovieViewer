@@ -48,7 +48,7 @@ class SearchViewModel(
     }
 
     fun updateQuery(query: String) {
-        _uiState.update { it.copy(query = query) }
+        _uiState.update { it.copy(query = query, page = 1, canLoadMore = true) }
 
         // Debounce search
         searchJob?.cancel()
@@ -66,6 +66,8 @@ class SearchViewModel(
         val query = _uiState.value.query
         if (query.isBlank()) return
 
+        if (_uiState.value.isLoading) return
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
@@ -81,14 +83,18 @@ class SearchViewModel(
                 return@launch
             }
 
-            when (val result = movieRepository.searchMovies(query, isOnline)) {
+            val page = _uiState.value.page
+
+            when (val result = movieRepository.searchMovies(query, isOnline, page)) {
                 is NetworkResource.Success -> {
+                    val newMovies = result.data ?: emptyList()
                     _uiState.update {
                         it.copy(
-                            results = result.data ?: emptyList(),
+                            results = if (page == 1) newMovies else it.results + newMovies,
                             isLoading = false,
                             error = null,
-                            hasSearched = true
+                            hasSearched = true,
+                            canLoadMore = newMovies.isNotEmpty()
                         )
                     }
                 }
@@ -98,7 +104,8 @@ class SearchViewModel(
                         it.copy(
                             isLoading = false,
                             error = result.message,
-                            hasSearched = true
+                            hasSearched = true,
+                            canLoadMore = false
                         )
                     }
                 }
@@ -106,6 +113,12 @@ class SearchViewModel(
                 is NetworkResource.Loading -> {}
             }
         }
+    }
+
+    fun loadNextPage() {
+        if (_uiState.value.isLoading || !_uiState.value.canLoadMore) return
+        _uiState.update { it.copy(page = it.page + 1) }
+        search()
     }
 
     fun clearSearch() {
