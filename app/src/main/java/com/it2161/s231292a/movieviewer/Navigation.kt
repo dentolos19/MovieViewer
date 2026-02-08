@@ -1,5 +1,9 @@
 package com.it2161.s231292a.movieviewer
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -100,7 +104,22 @@ fun AppNavigation() {
         )
 
         NavHost(navController = navController, startDestination = startDestination) {
-            composable(Routes.LOGIN) {
+            composable(
+                route = Routes.LOGIN,
+                enterTransition = {
+                    fadeIn(tween(300))
+                },
+                exitTransition = {
+                    if (targetState.destination.route == Routes.HOME) {
+                        fadeOut(tween(300))
+                    } else {
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                    }
+                },
+                popEnterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
+            ) {
                 LoginScreen(
                     viewModel = loginViewModel,
                     onLoginSuccess = {
@@ -118,7 +137,22 @@ fun AppNavigation() {
                 )
             }
 
-            composable(Routes.REGISTER) {
+            composable(
+                route = Routes.REGISTER,
+                enterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                exitTransition = {
+                    if (targetState.destination.route == Routes.HOME) {
+                        fadeOut(tween(300))
+                    } else {
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                    }
+                },
+                popExitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
+            ) {
                 RegisterScreen(
                     viewModel = registerViewModel,
                     onRegisterSuccess = {
@@ -136,7 +170,22 @@ fun AppNavigation() {
                 )
             }
 
-            composable(Routes.HOME) {
+            composable(
+                route = Routes.HOME,
+                enterTransition = {
+                    if (initialState.destination.route == Routes.LOGIN || initialState.destination.route == Routes.REGISTER) {
+                        fadeIn(tween(300))
+                    } else {
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                    }
+                },
+                exitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                popEnterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
+            ) {
                 HomeScreen(
                     viewModel = homeViewModel,
                     onMovieClick = { movieId ->
@@ -162,7 +211,22 @@ fun AppNavigation() {
                 )
             }
 
-            composable(Routes.PROFILE) {
+            composable(
+                route = Routes.PROFILE,
+                enterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                exitTransition = {
+                    if (targetState.destination.route == Routes.LOGIN) {
+                        fadeOut(tween(300))
+                    } else {
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                    }
+                },
+                popExitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
+            ) {
                 ProfileScreen(
                     viewModel = profileViewModel,
                     onBackClick = {
@@ -183,7 +247,21 @@ fun AppNavigation() {
                 )
             }
 
-            composable(Routes.FAVORITES) {
+            composable(
+                route = Routes.FAVORITES,
+                enterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                exitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                popEnterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                },
+                popExitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
+            ) {
                 FavoritesScreen(
                     viewModel = favoritesViewModel,
                     onMovieClick = { movieId ->
@@ -201,7 +279,19 @@ fun AppNavigation() {
 
             composable(
                 route = Routes.MOVIE_DETAIL,
-                arguments = listOf(navArgument("movieId") { type = NavType.IntType })
+                arguments = listOf(navArgument("movieId") { type = NavType.IntType }),
+                enterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                exitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                popEnterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                },
+                popExitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
             ) { backStackEntry ->
                 val movieId = backStackEntry.arguments?.getInt("movieId") ?: return@composable
 
@@ -234,7 +324,13 @@ fun AppNavigation() {
 
             composable(
                 route = Routes.MOVIE_REVIEWS,
-                arguments = listOf(navArgument("movieId") { type = NavType.IntType })
+                arguments = listOf(navArgument("movieId") { type = NavType.IntType }),
+                enterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                popExitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
             ) { backStackEntry ->
                 val movieId = backStackEntry.arguments?.getInt("movieId") ?: return@composable
 
@@ -254,7 +350,21 @@ fun AppNavigation() {
                 )
             }
 
-            composable(Routes.SEARCH) {
+            composable(
+                route = Routes.SEARCH,
+                enterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                exitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                },
+                popEnterTransition = {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                },
+                popExitTransition = {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                }
+            ) {
                 SearchScreen(
                     viewModel = searchViewModel,
                     onMovieClick = { movieId ->
