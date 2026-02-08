@@ -52,9 +52,13 @@ class HomeViewModel(
 
     fun selectCategory(category: MovieCategory) {
         if (_uiState.value.selectedCategory != category) {
-            _uiState.update { it.copy(selectedCategory = category, movies = emptyList(), page = 1, canLoadMore = true) }
+            _uiState.update { it.copy(selectedCategory = category, movies = emptyList(), page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0) }
             loadMovies()
         }
+    }
+
+    fun saveScrollPosition(index: Int, offset: Int) {
+        _uiState.update { it.copy(listStateIndex = index, listStateOffset = offset) }
     }
 
     fun loadMovies() {
@@ -143,7 +147,7 @@ class HomeViewModel(
 
     fun refresh() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true, page = 1, canLoadMore = true) }
+            _uiState.update { it.copy(isRefreshing = true, page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0) }
 
             val category = _uiState.value.selectedCategory
             val isOnline = networkMonitor.isCurrentlyConnected()

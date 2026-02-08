@@ -131,6 +131,10 @@ class FavoritesViewModel(
         }
     }
 
+    fun saveScrollPosition(index: Int, offset: Int) {
+        _uiState.update { it.copy(listStateIndex = index, listStateOffset = offset) }
+    }
+
     private fun sortMovies(movies: List<Movie>, sortOption: SortOption): List<Movie> {
         return when (sortOption) {
             SortOption.TITLE_ASC -> movies.sortedBy { it.title }

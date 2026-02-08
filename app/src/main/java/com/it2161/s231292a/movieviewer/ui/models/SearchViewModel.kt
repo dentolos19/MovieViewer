@@ -48,7 +48,7 @@ class SearchViewModel(
     }
 
     fun updateQuery(query: String) {
-        _uiState.update { it.copy(query = query, page = 1, canLoadMore = true) }
+        _uiState.update { it.copy(query = query, page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0) }
 
         // Debounce search
         searchJob?.cancel()
@@ -60,6 +60,10 @@ class SearchViewModel(
         } else {
             _uiState.update { it.copy(results = emptyList(), hasSearched = false) }
         }
+    }
+
+    fun saveScrollPosition(index: Int, offset: Int) {
+        _uiState.update { it.copy(listStateIndex = index, listStateOffset = offset) }
     }
 
     fun search() {

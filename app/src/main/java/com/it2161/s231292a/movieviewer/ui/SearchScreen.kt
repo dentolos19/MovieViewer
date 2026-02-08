@@ -28,7 +28,10 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
-    val listState = rememberLazyListState()
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = uiState.listStateIndex,
+        initialFirstVisibleItemScrollOffset = uiState.listStateOffset
+    )
 
     // Infinite scroll detection
     val shouldLoadMore = remember {
@@ -54,7 +57,10 @@ fun SearchScreen(
                 canNavigateBack = true,
                 onNavigateBack = onBackClick,
                 actions = {
-                    IconButton(onClick = onFavoritesClick) {
+                    IconButton(onClick = {
+                        viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                        onFavoritesClick()
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Favorite,
                             contentDescription = "Favorites"
@@ -143,7 +149,10 @@ fun SearchScreen(
                         ) { movie ->
                             MovieCard(
                                 movie = movie,
-                                onClick = { onMovieClick(movie.id) },
+                                onClick = {
+                                    viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                                    onMovieClick(movie.id)
+                                },
                                 isFavorite = uiState.favoriteMovieIds.contains(movie.id)
                             )
                         }

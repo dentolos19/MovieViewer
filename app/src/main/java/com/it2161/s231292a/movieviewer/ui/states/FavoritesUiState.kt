@@ -18,5 +18,7 @@ data class FavoritesUiState(
     val error: String? = null,
     val movies: List<Movie> = emptyList(),
     val loadingMovieIds: Set<Int> = emptySet(),
-    val sortOption: SortOption = SortOption.TITLE_ASC
+    val sortOption: SortOption = SortOption.TITLE_ASC,
+    val listStateIndex: Int = 0,
+    val listStateOffset: Int = 0
 )

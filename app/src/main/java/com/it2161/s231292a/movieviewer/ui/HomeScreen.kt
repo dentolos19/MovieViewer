@@ -35,7 +35,10 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDropdownMenu by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = uiState.listStateIndex,
+        initialFirstVisibleItemScrollOffset = uiState.listStateOffset
+    )
     val coroutineScope = rememberCoroutineScope()
 
     val navItems = listOf(
@@ -77,7 +80,10 @@ fun HomeScreen(
             AppHeader(
                 title = "Movie Viewer",
                 navigationIcon = {
-                    IconButton(onClick = onSearchClick) {
+                    IconButton(onClick = {
+                        viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                        onSearchClick()
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = "Search"
@@ -100,6 +106,7 @@ fun HomeScreen(
                                 text = { Text("Profile") },
                                 onClick = {
                                     showDropdownMenu = false
+                                    viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
                                     onProfileClick()
                                 },
                                 leadingIcon = {
@@ -113,6 +120,7 @@ fun HomeScreen(
                                 text = { Text("Favorites") },
                                 onClick = {
                                     showDropdownMenu = false
+                                    viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
                                     onFavoritesClick()
                                 },
                                 leadingIcon = {
@@ -207,7 +215,10 @@ fun HomeScreen(
                             ) { movie ->
                                 MovieCard(
                                     movie = movie,
-                                    onClick = { onMovieClick(movie.id) },
+                                    onClick = {
+                                        viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                                        onMovieClick(movie.id)
+                                    },
                                     isFavorite = uiState.favoriteMovieIds.contains(movie.id)
                                 )
                             }

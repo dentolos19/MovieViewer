@@ -11,5 +11,7 @@ data class SearchUiState(
     val results: List<Movie> = emptyList(),
     val favoriteMovieIds: Set<Int> = emptySet(),
     val page: Int = 1,
-    val canLoadMore: Boolean = true
+    val canLoadMore: Boolean = true,
+    val listStateIndex: Int = 0,
+    val listStateOffset: Int = 0
 )

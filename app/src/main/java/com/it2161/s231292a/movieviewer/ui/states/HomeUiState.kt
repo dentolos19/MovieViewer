@@ -1,5 +1,6 @@
 package com.it2161.s231292a.movieviewer.ui.states
 
+import androidx.compose.foundation.lazy.LazyListState
 import com.it2161.s231292a.movieviewer.data.entities.Movie
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 
@@ -12,5 +13,7 @@ data class HomeUiState(
     val selectedCategory: MovieCategory = MovieCategory.POPULAR,
     val favoriteMovieIds: Set<Int> = emptySet(),
     val page: Int = 1,
-    val canLoadMore: Boolean = true
+    val canLoadMore: Boolean = true,
+    val listStateIndex: Int = 0,
+    val listStateOffset: Int = 0
 )

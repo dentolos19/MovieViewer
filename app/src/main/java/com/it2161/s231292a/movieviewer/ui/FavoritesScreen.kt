@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
@@ -34,6 +35,10 @@ fun FavoritesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showSortMenu by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = uiState.listStateIndex,
+        initialFirstVisibleItemScrollOffset = uiState.listStateOffset
+    )
 
     // Confirmation Dialog
     if (movieToRemove != null) {
@@ -153,6 +158,7 @@ fun FavoritesScreen(
 
                     else -> {
                         LazyColumn(
+                            state = listState,
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             modifier = Modifier.fillMaxSize()
@@ -163,7 +169,10 @@ fun FavoritesScreen(
                             ) { movie ->
                                 FavoriteMovieCard(
                                     movie = movie,
-                                    onClick = { onMovieClick(movie.id) },
+                                    onClick = {
+                                        viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                                        onMovieClick(movie.id)
+                                    },
                                     onDeleteClick = { movieToRemove = movie.id },
                                     modifier = Modifier.animateItem()
                                 )
