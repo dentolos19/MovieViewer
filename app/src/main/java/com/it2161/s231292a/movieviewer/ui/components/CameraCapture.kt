@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -197,26 +198,50 @@ fun CameraCaptureDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(24.dp),
+                        .padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "Camera permission is required to take a profile picture",
-                        style = MaterialTheme.typography.bodyLarge
+                    Icon(
+                        imageVector = Icons.Filled.Camera,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    Text(
+                        text = "Camera Permission Required",
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "To take a profile picture, please grant access to your camera.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Button(
+                        onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
-                            Text("Grant Permission")
-                        }
-                        Button(onClick = onDismiss) {
-                            Text("Cancel")
-                        }
+                        Text("Grant Permission")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    TextButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Cancel")
                     }
                 }
             }

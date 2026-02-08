@@ -78,10 +78,13 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             AppHeader(
-                title = "Movie Viewer",
+                title = "Popcorn Movies",
                 navigationIcon = {
                     IconButton(onClick = {
-                        viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                        viewModel.saveScrollPosition(
+                            listState.firstVisibleItemIndex,
+                            listState.firstVisibleItemScrollOffset
+                        )
                         onSearchClick()
                     }) {
                         Icon(
@@ -106,7 +109,10 @@ fun HomeScreen(
                                 text = { Text("Profile") },
                                 onClick = {
                                     showDropdownMenu = false
-                                    viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                                    viewModel.saveScrollPosition(
+                                        listState.firstVisibleItemIndex,
+                                        listState.firstVisibleItemScrollOffset
+                                    )
                                     onProfileClick()
                                 },
                                 leadingIcon = {
@@ -120,7 +126,10 @@ fun HomeScreen(
                                 text = { Text("Favorites") },
                                 onClick = {
                                     showDropdownMenu = false
-                                    viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                                    viewModel.saveScrollPosition(
+                                        listState.firstVisibleItemIndex,
+                                        listState.firstVisibleItemScrollOffset
+                                    )
                                     onFavoritesClick()
                                 },
                                 leadingIcon = {
@@ -216,7 +225,10 @@ fun HomeScreen(
                                 MovieCard(
                                     movie = movie,
                                     onClick = {
-                                        viewModel.saveScrollPosition(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset)
+                                        viewModel.saveScrollPosition(
+                                            listState.firstVisibleItemIndex,
+                                            listState.firstVisibleItemScrollOffset
+                                        )
                                         onMovieClick(movie.id)
                                     },
                                     isFavorite = uiState.favoriteMovieIds.contains(movie.id)
