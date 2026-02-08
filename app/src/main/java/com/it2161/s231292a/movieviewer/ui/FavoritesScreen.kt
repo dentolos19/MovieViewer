@@ -42,6 +42,7 @@ fun FavoritesScreen(
                         movieToRemove?.let { movieId ->
                             viewModel.removeFromFavorites(movieId)
                             scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
                                 val result = snackbarHostState.showSnackbar(
                                     message = "Removed from favorites",
                                     actionLabel = "Undo",

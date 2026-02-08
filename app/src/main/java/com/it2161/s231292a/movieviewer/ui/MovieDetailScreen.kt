@@ -77,17 +77,24 @@ fun MovieDetailScreen(
                 actions = {
                     if (uiState.movieDetail != null) {
                         IconButton(onClick = {
+                            val wasFavorite = uiState.isFavorite
                             viewModel.toggleFavorite()
                             scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
                                 val message =
-                                    if (!uiState.isFavorite) "Added to favorites" else "Removed from favorites"
+                                    if (!wasFavorite) "Added to favorites" else "Removed from favorites"
+                                val actionLabel = if (wasFavorite) "Undo" else if (!uiState.isFavorite) "View" else null
                                 val result = snackbarHostState.showSnackbar(
                                     message = message,
-                                    actionLabel = if (!uiState.isFavorite) "View" else null,
+                                    actionLabel = actionLabel,
                                     duration = SnackbarDuration.Short
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
-                                    onFavoritesClick()
+                                    if (wasFavorite) {
+                                        viewModel.toggleFavorite()
+                                    } else {
+                                        onFavoritesClick()
+                                    }
                                 }
                             }
                         }) {
