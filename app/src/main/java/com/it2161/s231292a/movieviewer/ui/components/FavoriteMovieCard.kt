@@ -115,17 +115,36 @@ fun FavoriteMovieCard(
                         .weight(1f)
                         .padding(vertical = 2.dp)
                 ) {
-                    // Title
-                    Text(
-                        text = movie.title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            lineHeight = 22.sp
-                        ),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        // Title
+                        Text(
+                            text = movie.title,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 17.sp,
+                                lineHeight = 22.sp
+                            ),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f).padding(end = 4.dp)
+                        )
+
+                        // Delete Icon Button
+                        IconButton(
+                            onClick = onDeleteClick,
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Remove from Favorites",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(6.dp))
 
@@ -189,26 +208,6 @@ fun FavoriteMovieCard(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Delete Button
-            Button(
-                onClick = onDeleteClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Remove from Favorites")
             }
         }
     }
