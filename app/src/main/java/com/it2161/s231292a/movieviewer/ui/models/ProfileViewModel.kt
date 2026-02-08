@@ -25,7 +25,7 @@ class ProfileViewModel(
         loadProfile()
     }
 
-    private fun loadProfile() {
+    fun loadProfile() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 

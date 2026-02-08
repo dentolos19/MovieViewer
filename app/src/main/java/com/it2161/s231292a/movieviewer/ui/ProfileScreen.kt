@@ -39,6 +39,10 @@ fun ProfileScreen(
 
     val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
+    LaunchedEffect(Unit) {
+        viewModel.loadProfile()
+    }
+
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
             Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
