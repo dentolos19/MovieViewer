@@ -7,6 +7,7 @@ import com.it2161.s231292a.movieviewer.data.NetworkMonitor
 import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.ui.states.FavoritesUiState
+import com.it2161.s231292a.movieviewer.ui.states.SortOption
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.it2161.s231292a.movieviewer.data.toMovie
+import com.it2161.s231292a.movieviewer.data.entities.Movie
 
 class FavoritesViewModel(
     private val movieRepository: MovieRepository,
@@ -66,7 +68,7 @@ class FavoritesViewModel(
                 .collect { movies ->
                     _uiState.update {
                         it.copy(
-                            movies = movies,
+                            movies = sortMovies(movies, it.sortOption),
                             isLoading = false
                         )
                     }
@@ -117,6 +119,26 @@ class FavoritesViewModel(
     fun addToFavorites(movieId: Int) {
         viewModelScope.launch {
             favoritesRepository.addToFavorites(movieId)
+        }
+    }
+
+    fun updateSortOption(sortOption: SortOption) {
+        _uiState.update {
+            it.copy(
+                sortOption = sortOption,
+                movies = sortMovies(it.movies, sortOption)
+            )
+        }
+    }
+
+    private fun sortMovies(movies: List<Movie>, sortOption: SortOption): List<Movie> {
+        return when (sortOption) {
+            SortOption.TITLE_ASC -> movies.sortedBy { it.title }
+            SortOption.TITLE_DESC -> movies.sortedByDescending { it.title }
+            SortOption.RATING_ASC -> movies.sortedBy { it.voteAverage }
+            SortOption.RATING_DESC -> movies.sortedByDescending { it.voteAverage }
+            SortOption.RELEASE_DATE_ASC -> movies.sortedBy { it.releaseDate }
+            SortOption.RELEASE_DATE_DESC -> movies.sortedByDescending { it.releaseDate }
         }
     }
 

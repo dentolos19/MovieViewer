@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.FavoritesViewModel
+import com.it2161.s231292a.movieviewer.ui.states.SortOption
 import kotlinx.coroutines.launch
 
 @Composable
@@ -29,6 +32,7 @@ fun FavoritesScreen(
     val pullRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var showSortMenu by remember { mutableStateOf(false) }
 
     // Confirmation Dialog
     if (movieToRemove != null) {
@@ -73,7 +77,31 @@ fun FavoritesScreen(
             AppHeader(
                 title = "Favorites",
                 canNavigateBack = true,
-                onNavigateBack = onBackClick
+                onNavigateBack = onBackClick,
+                actions = {
+                    IconButton(onClick = { showSortMenu = true }) {
+                        Icon(Icons.Default.Sort, contentDescription = "Sort")
+                    }
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { showSortMenu = false }
+                    ) {
+                        SortOption.values().forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(getSortOptionLabel(option)) },
+                                onClick = {
+                                    viewModel.updateSortOption(option)
+                                    showSortMenu = false
+                                },
+                                trailingIcon = {
+                                    if (uiState.sortOption == option) {
+                                        Icon(Icons.Default.Check, contentDescription = "Selected")
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -150,5 +178,16 @@ fun FavoritesScreen(
                 }
             }
         }
+    }
+}
+
+fun getSortOptionLabel(option: SortOption): String {
+    return when (option) {
+        SortOption.TITLE_ASC -> "Title (A-Z)"
+        SortOption.TITLE_DESC -> "Title (Z-A)"
+        SortOption.RATING_ASC -> "Rating (Low-High)"
+        SortOption.RATING_DESC -> "Rating (High-Low)"
+        SortOption.RELEASE_DATE_ASC -> "Release Date (Oldest)"
+        SortOption.RELEASE_DATE_DESC -> "Release Date (Newest)"
     }
 }
