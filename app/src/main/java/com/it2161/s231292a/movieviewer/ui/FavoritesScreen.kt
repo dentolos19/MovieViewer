@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
 package com.it2161.s231292a.movieviewer.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -163,7 +164,8 @@ fun FavoritesScreen(
                                 FavoriteMovieCard(
                                     movie = movie,
                                     onClick = { onMovieClick(movie.id) },
-                                    onDeleteClick = { movieToRemove = movie.id }
+                                    onDeleteClick = { movieToRemove = movie.id },
+                                    modifier = Modifier.animateItem()
                                 )
                             }
 
@@ -171,7 +173,9 @@ fun FavoritesScreen(
                                 count = uiState.loadingMovieIds.size,
                                 key = { index -> "loading_${uiState.loadingMovieIds.elementAt(index)}" }
                             ) {
-                                SkeletonMovieCard()
+                                SkeletonMovieCard(
+                                    modifier = Modifier.animateItem(),
+                                )
                             }
                         }
                     }
