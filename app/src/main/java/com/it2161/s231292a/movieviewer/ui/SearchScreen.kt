@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.SearchViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -32,6 +33,7 @@ fun SearchScreen(
         initialFirstVisibleItemIndex = uiState.listStateIndex,
         initialFirstVisibleItemScrollOffset = uiState.listStateOffset
     )
+    val coroutineScope = rememberCoroutineScope()
 
     // Infinite scroll detection
     val shouldLoadMore = remember {
@@ -80,7 +82,12 @@ fun SearchScreen(
             // Search Bar
             OutlinedTextField(
                 value = uiState.query,
-                onValueChange = viewModel::updateQuery,
+                onValueChange = {
+                    viewModel.updateQuery(it)
+                    coroutineScope.launch {
+                        listState.scrollToItem(0)
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -107,6 +114,9 @@ fun SearchScreen(
                     onSearch = {
                         viewModel.search()
                         focusManager.clearFocus()
+                        coroutineScope.launch {
+                            listState.scrollToItem(0)
+                        }
                     }
                 )
             )
