@@ -34,6 +34,7 @@ fun SearchScreen(
         initialFirstVisibleItemScrollOffset = uiState.listStateOffset
     )
     val coroutineScope = rememberCoroutineScope()
+    var shouldScrollToTop by remember { mutableStateOf(false) }
 
     // Infinite scroll detection
     val shouldLoadMore = remember {
@@ -49,6 +50,13 @@ fun SearchScreen(
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value && uiState.canLoadMore && !uiState.isLoading) {
             viewModel.loadNextPage()
+        }
+    }
+
+    LaunchedEffect(uiState.results) {
+        if (shouldScrollToTop && uiState.results.isNotEmpty()) {
+            listState.scrollToItem(0)
+            shouldScrollToTop = false
         }
     }
 
@@ -84,9 +92,7 @@ fun SearchScreen(
                 value = uiState.query,
                 onValueChange = {
                     viewModel.updateQuery(it)
-                    coroutineScope.launch {
-                        listState.scrollToItem(0)
-                    }
+                    shouldScrollToTop = true
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -114,9 +120,7 @@ fun SearchScreen(
                     onSearch = {
                         viewModel.search()
                         focusManager.clearFocus()
-                        coroutineScope.launch {
-                            listState.scrollToItem(0)
-                        }
+                        shouldScrollToTop = true
                     }
                 )
             )
@@ -128,7 +132,14 @@ fun SearchScreen(
                 }
 
                 uiState.isLoading && uiState.results.isEmpty() -> {
-                    LoadingIndicator()
+                    LazyColumn(
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(5) {
+                            SkeletonMovieCard()
+                        }
+                    }
                 }
 
                 uiState.error != null && uiState.results.isEmpty() -> {
