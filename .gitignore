@@ -4,11 +4,10 @@
 
 # Project files
 .gradle/
+.kotlin/
 
 # User files
 local.properties
-.env*
-!.env*.template
 
 # Miscellaneous files
 .DS_Store

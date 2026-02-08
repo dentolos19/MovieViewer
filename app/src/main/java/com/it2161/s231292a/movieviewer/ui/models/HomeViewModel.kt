@@ -9,6 +9,7 @@ import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 import com.it2161.s231292a.movieviewer.ui.states.HomeUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,8 @@ class HomeViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private var loadMoviesJob: Job? = null
 
     init {
         observeNetworkStatus()
@@ -52,7 +55,8 @@ class HomeViewModel(
 
     fun selectCategory(category: MovieCategory) {
         if (_uiState.value.selectedCategory != category) {
-            _uiState.update { it.copy(selectedCategory = category, movies = emptyList(), page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0) }
+            loadMoviesJob?.cancel()
+            _uiState.update { it.copy(selectedCategory = category, movies = emptyList(), page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0, isLoading = false) }
             loadMovies()
         }
     }
@@ -64,7 +68,7 @@ class HomeViewModel(
     fun loadMovies() {
         if (_uiState.value.isLoading) return
 
-        viewModelScope.launch {
+        loadMoviesJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
             val category = _uiState.value.selectedCategory

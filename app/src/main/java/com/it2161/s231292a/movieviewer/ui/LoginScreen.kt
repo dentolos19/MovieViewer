@@ -65,12 +65,12 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Username Field
+            // User ID Field
             TextInput(
                 value = uiState.username,
                 onValueChange = viewModel::updateUsername,
-                label = "Username",
-                placeholder = "Enter your username",
+                label = "User ID",
+                placeholder = "Enter your user ID",
                 errorText = uiState.usernameError,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
