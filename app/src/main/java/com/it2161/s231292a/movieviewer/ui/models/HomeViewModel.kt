@@ -90,7 +90,11 @@ class HomeViewModel(
                         val newMovies = result.data ?: emptyList()
                         _uiState.update {
                             it.copy(
-                                movies = if (page == 1) newMovies else it.movies + newMovies,
+                                movies = if (page == 1) {
+                                    newMovies.distinctBy { movie -> movie.id }
+                                } else {
+                                    (it.movies + newMovies).distinctBy { movie -> movie.id }
+                                },
                                 isLoading = false,
                                 error = null,
                                 canLoadMore = newMovies.isNotEmpty()
@@ -161,7 +165,7 @@ class HomeViewModel(
                     is NetworkResource.Success -> {
                         _uiState.update {
                             it.copy(
-                                movies = result.data ?: emptyList(),
+                                movies = (result.data ?: emptyList()).distinctBy { movie -> movie.id },
                                 isRefreshing = false,
                                 error = null,
                                 canLoadMore = (result.data?.size ?: 0) > 0

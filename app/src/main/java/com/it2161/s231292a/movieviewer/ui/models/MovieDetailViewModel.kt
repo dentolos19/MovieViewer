@@ -88,7 +88,7 @@ class MovieDetailViewModel(
                 is NetworkResource.Success -> {
                     _uiState.update {
                         it.copy(
-                            reviews = result.data ?: emptyList(),
+                            reviews = (result.data ?: emptyList()).distinctBy { review -> review.id },
                             isLoadingReviews = false
                         )
                     }
@@ -97,7 +97,7 @@ class MovieDetailViewModel(
                 is NetworkResource.Error -> {
                     _uiState.update {
                         it.copy(
-                            reviews = result.data ?: emptyList(),
+                            reviews = (result.data ?: emptyList()).distinctBy { review -> review.id },
                             isLoadingReviews = false
                         )
                     }

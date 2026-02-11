@@ -68,7 +68,7 @@ class FavoritesViewModel(
                 .collect { movies ->
                     _uiState.update {
                         it.copy(
-                            movies = sortMovies(movies, it.sortOption),
+                            movies = sortMovies(movies.distinctBy { movie -> movie.id }, it.sortOption),
                             isLoading = false
                         )
                     }

@@ -94,7 +94,11 @@ class SearchViewModel(
                     val newMovies = result.data ?: emptyList()
                     _uiState.update {
                         it.copy(
-                            results = if (page == 1) newMovies else it.results + newMovies,
+                            results = if (page == 1) {
+                                newMovies
+                            } else {
+                                (it.results + newMovies).distinctBy { movie -> movie.id }
+                            },
                             isLoading = false,
                             error = null,
                             hasSearched = true,
