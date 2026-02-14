@@ -18,7 +18,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.SearchViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -33,7 +32,7 @@ fun SearchScreen(
         initialFirstVisibleItemIndex = uiState.listStateIndex,
         initialFirstVisibleItemScrollOffset = uiState.listStateOffset
     )
-    val coroutineScope = rememberCoroutineScope()
+    rememberCoroutineScope()
     var shouldScrollToTop by remember { mutableStateOf(false) }
 
     // Infinite scroll detection

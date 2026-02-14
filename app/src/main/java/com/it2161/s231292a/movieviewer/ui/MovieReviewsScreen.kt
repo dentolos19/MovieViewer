@@ -15,19 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.it2161.s231292a.movieviewer.Constants
 import com.it2161.s231292a.movieviewer.data.entities.MovieReview
-import com.it2161.s231292a.movieviewer.ui.components.AppHeader
-import com.it2161.s231292a.movieviewer.ui.components.EmptyState
-import com.it2161.s231292a.movieviewer.ui.components.ErrorState
-import com.it2161.s231292a.movieviewer.ui.components.LoadingIndicator
-import com.it2161.s231292a.movieviewer.ui.components.NetworkStatusBanner
+import com.it2161.s231292a.movieviewer.ui.components.*
 import com.it2161.s231292a.movieviewer.ui.models.MovieReviewsViewModel
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 @Composable
 fun MovieReviewsScreen(
@@ -56,15 +51,18 @@ fun MovieReviewsScreen(
                 uiState.isLoading -> {
                     LoadingIndicator()
                 }
+
                 uiState.error != null && uiState.reviews.isEmpty() -> {
                     ErrorState(message = uiState.error!!)
                 }
+
                 uiState.reviews.isEmpty() -> {
                     EmptyState(
                         title = "No reviews yet",
                         message = "Be the first to review this movie!"
                     )
                 }
+
                 else -> {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),

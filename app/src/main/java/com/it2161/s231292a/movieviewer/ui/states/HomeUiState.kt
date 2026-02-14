@@ -1,6 +1,5 @@
 package com.it2161.s231292a.movieviewer.ui.states
 
-import androidx.compose.foundation.lazy.LazyListState
 import com.it2161.s231292a.movieviewer.data.entities.Movie
 import com.it2161.s231292a.movieviewer.data.types.MovieCategory
 

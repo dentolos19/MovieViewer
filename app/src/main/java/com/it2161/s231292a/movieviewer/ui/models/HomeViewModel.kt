@@ -56,7 +56,17 @@ class HomeViewModel(
     fun selectCategory(category: MovieCategory) {
         if (_uiState.value.selectedCategory != category) {
             loadMoviesJob?.cancel()
-            _uiState.update { it.copy(selectedCategory = category, movies = emptyList(), page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0, isLoading = false) }
+            _uiState.update {
+                it.copy(
+                    selectedCategory = category,
+                    movies = emptyList(),
+                    page = 1,
+                    canLoadMore = true,
+                    listStateIndex = 0,
+                    listStateOffset = 0,
+                    isLoading = false
+                )
+            }
             loadMovies()
         }
     }
@@ -155,7 +165,15 @@ class HomeViewModel(
 
     fun refresh() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true, page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0) }
+            _uiState.update {
+                it.copy(
+                    isRefreshing = true,
+                    page = 1,
+                    canLoadMore = true,
+                    listStateIndex = 0,
+                    listStateOffset = 0
+                )
+            }
 
             val category = _uiState.value.selectedCategory
             val isOnline = networkMonitor.isCurrentlyConnected()

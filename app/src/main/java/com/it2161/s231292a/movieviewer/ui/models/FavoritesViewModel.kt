@@ -4,21 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.it2161.s231292a.movieviewer.data.NetworkMonitor
+import com.it2161.s231292a.movieviewer.data.entities.Movie
 import com.it2161.s231292a.movieviewer.data.repositories.FavoritesRepository
 import com.it2161.s231292a.movieviewer.data.repositories.MovieRepository
+import com.it2161.s231292a.movieviewer.data.toMovie
 import com.it2161.s231292a.movieviewer.ui.states.FavoritesUiState
 import com.it2161.s231292a.movieviewer.ui.states.SortOption
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import com.it2161.s231292a.movieviewer.data.toMovie
-import com.it2161.s231292a.movieviewer.data.entities.Movie
 
 class FavoritesViewModel(
     private val movieRepository: MovieRepository,

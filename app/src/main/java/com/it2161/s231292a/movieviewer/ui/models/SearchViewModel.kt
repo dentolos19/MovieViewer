@@ -48,7 +48,15 @@ class SearchViewModel(
     }
 
     fun updateQuery(query: String) {
-        _uiState.update { it.copy(query = query, page = 1, canLoadMore = true, listStateIndex = 0, listStateOffset = 0) }
+        _uiState.update {
+            it.copy(
+                query = query,
+                page = 1,
+                canLoadMore = true,
+                listStateIndex = 0,
+                listStateOffset = 0
+            )
+        }
 
         // Debounce search
         searchJob?.cancel()
